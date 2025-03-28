@@ -1,4 +1,4 @@
-package com.example.app_comedor
+package com.example.app_comedor.app.host
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.app_comedor.ui.theme.App_comedorTheme
+import com.example.app_comedor.presentacion.theme.App_comedorTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

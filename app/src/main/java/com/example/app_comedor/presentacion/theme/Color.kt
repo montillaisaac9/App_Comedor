@@ -1,4 +1,4 @@
-package com.example.app_comedor.ui.theme
+package com.example.app_comedor.presentacion.theme
 
 import androidx.compose.ui.graphics.Color
 
