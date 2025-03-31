@@ -18,5 +18,4 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){     Text("INICIAR SESION") }
-
 }

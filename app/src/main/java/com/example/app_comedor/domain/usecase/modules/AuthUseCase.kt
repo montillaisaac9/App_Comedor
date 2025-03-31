@@ -6,4 +6,6 @@ import com.example.app_comedor.data.repository.RepositoryAuthImp
 class AuthUseCase constructor(val repositoryImpl: RepositoryAuthImp){
 
     suspend fun login(params: LoginParams) = repositoryImpl.logIn(params)
+
+    fun getLocalePerfil() = repositoryImpl.getLocalPerfil()
 }

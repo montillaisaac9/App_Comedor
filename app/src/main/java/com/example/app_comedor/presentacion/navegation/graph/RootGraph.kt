@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.app_comedor.presentacion.splash.SplashScreen
+import com.example.app_comedor.presentacion.navegation.destination.Screen
+import com.example.app_comedor.presentacion.screens.splash.SplashScreen
 
 @Composable
 fun RootNavigationGraph(modifier: Modifier = Modifier) {
@@ -13,11 +14,11 @@ fun RootNavigationGraph(modifier: Modifier = Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = "splash",
+        startDestination = Screen.SplashScreen.route,
         modifier = modifier
     ) {
         // Splash screen to check authentication status
-        composable("splash") {
+        composable(Screen.SplashScreen.route) {
             SplashScreen(navController = navController)
         }
 

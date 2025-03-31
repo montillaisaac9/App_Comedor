@@ -7,16 +7,18 @@ import com.example.app_comedor.di.RoomModule
 import com.example.app_comedor.di.repositoryModule
 import com.example.app_comedor.di.useCaseModule
 import com.example.app_comedor.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.logger.slf4jLogger
 import timber.log.Timber
 
-class App: Application() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         startKoin {
+            androidContext(this@App) // Provide the Android context to Koin
             slf4jLogger()
             modules(listOf(
                 ApiModule,      // Módulo de servicios API
@@ -28,5 +30,4 @@ class App: Application() {
             ))
         }
     }
-
 }
