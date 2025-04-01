@@ -66,4 +66,18 @@
     <string name="CODE511">Code 511 Network Authentication Required (en-US) El código de estado 511 indica que el cliente necesita autenticar para obtener acceso a la red.</string>
     <string name="CODE521">Code 521 El servidor web está caído. El error 521 es un mensaje de error específico de Cloudflare. Significa que su navegador web fue capaz de conectarse con éxito a Cloudflare, pero Cloudflare no fue capaz de conectarse al servidor web de origen.</string>
     <string name="CODE525">Code 418 Im a teapot</string>
+    <string name="correo_electronico">Correo</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="password_case_use_1">Se requiere contraseña.</string>
+    <string name="password_case_use_2">La contraseña debe tener al menos 8 caracteres.</string>
+    <string name="password_case_use_3">La contraseña debe contener al menos una letra mayúscula.</string>
+    <string name="password_case_use_4">La contraseña debe contener al menos una letra minúscula.</string>
+    <string name="password_case_use_5">La contraseña debe contener al menos un carácter especial.</string>
+    <string name="password_case_use_6">La contraseña debe ser más compleja.</string>
+    <string name="password_case_use_7">La contraseña no coincide</string>
+    <string name="wrong_email_address">Dirección de correo errónea</string>
+    <string name="email_is_required">Correo electronico es requerido.</string>
+    <string name="clear_field">Limpiar campo</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
 </resources>

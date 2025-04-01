@@ -39,7 +39,8 @@ fun SplashScreen(
     val perfil = viewModel.perfil
 
     LaunchedEffect(perfil) {
-        navController.navigate("auth")
+        if (perfil == null) navController.navigate("auth")
+        else navController.navigate("dashboard_graph")
     }
 
     val scaleAnimation: Animatable<Float, AnimationVector1D> =

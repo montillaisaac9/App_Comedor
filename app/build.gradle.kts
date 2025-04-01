@@ -88,11 +88,13 @@ dependencies {
     //navigations_compose
     implementation(libs.androidx.navigation.compose)
 
-    //Room]
+    //Room
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+    //icons
+    implementation(libs.icons)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
