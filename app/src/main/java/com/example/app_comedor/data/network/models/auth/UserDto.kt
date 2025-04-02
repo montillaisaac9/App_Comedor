@@ -1,5 +1,6 @@
 package com.example.app_comedor.data.network.models.auth
 
+import com.example.app_comedor.data.network.models.auth.UserDTO.CareerDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,9 +19,24 @@ data class UserDTO(
     data class CareerDTO(
         val id: Int,
         val name: String
-    ) {
-        companion object
-    }
+    )
 }
+
+fun User.toDto(): UserDTO {
+    return UserDTO(
+        id = this.id ?: 0,
+        email = this.email ?: "",
+        name = this.name ?: "",
+        identification = this.identification ?: "",
+        role = this.role ?: "",
+        securityWord = this.securityWord ?: "",
+        isActive = this.isActive ?: false,
+        photo = this.photo ?: "",
+        careers = this.careers?.map { CareerDTO(it.id ?: 0, it.name ?: "") } ?: emptyList()
+    )
+}
+
+
+
 
 

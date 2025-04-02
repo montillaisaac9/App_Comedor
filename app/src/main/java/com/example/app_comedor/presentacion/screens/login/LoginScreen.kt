@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.app_comedor.R
 import com.example.app_comedor.presentacion.common.buttons.CustomButton
 import com.example.app_comedor.presentacion.common.inputs.CustomInput
+import com.example.app_comedor.utils.ApiResult
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -109,8 +109,16 @@ fun LoginScreen(
                     modifier = Modifier.padding(10.dp, bottom = 30.dp),
                     text = "Iniciar Sesión",
                     enable = stateLogin.email.isNotEmpty() && stateLogin.password.isNotEmpty()
-                ) { }
+                ) {
+                    viewModel.login()
+                }
             }
         }
+    }
+    when(viewModel.loginResponse){
+        is ApiResult.Error -> TODO()
+        is ApiResult.Loading -> TODO()
+        is ApiResult.Success -> TODO()
+        null -> {}
     }
 }

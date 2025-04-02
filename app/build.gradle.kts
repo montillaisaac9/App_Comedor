@@ -25,7 +25,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            isDebuggable = false
+            isDebuggable = true
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue( type= "string", name= "app_name", value= "App_comedor dev")
@@ -38,9 +38,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            resValue( type= "string", name= "app_name", value= "App_comedor dev")
+            resValue( type= "string", name= "app_name", value= "App_comedor")
             buildConfigField("String", "HOST", rootProject.ext.properties["HOST"].toString()
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
