@@ -1,6 +1,6 @@
 package com.example.app_comedor.presentacion.screens.login.components
 
-data class Data(
+data class DataLogin(
     val email: String = "",
     val password: String = "",
     var errMsgEmail : String = "",

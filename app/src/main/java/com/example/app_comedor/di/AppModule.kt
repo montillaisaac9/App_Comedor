@@ -6,6 +6,7 @@ import com.example.app_comedor.domain.repository.RepositoryAuth
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.domain.usecase.modules.AuthUseCase
 import com.example.app_comedor.presentacion.screens.login.LoginViewModel
+import com.example.app_comedor.presentacion.screens.register.RegisterViewModel
 import com.example.app_comedor.presentacion.screens.splash.SplashViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -20,7 +21,6 @@ val repositoryModule = module {
 val useCaseModule = module {
     single { AuthUseCase(get<RepositoryAuthImp>()) }
 
-    // Registrar el contenedor UseCase
     single { UseCase(
         auth = get(),
     ) }
@@ -30,6 +30,7 @@ val useCaseModule = module {
 val viewModelModule = module {
     viewModel { LoginViewModel(get<UseCase>()) }
     viewModel { SplashViewModel(get<UseCase>()) }
+    viewModel { RegisterViewModel(get<UseCase>()) }
 }
 
 // Módulo principal que incluye todos los otros módulos

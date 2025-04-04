@@ -9,19 +9,18 @@ import com.example.app_comedor.data.network.models.auth.LoginParams
 import com.example.app_comedor.data.network.models.auth.User
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
-import com.example.app_comedor.presentacion.screens.login.components.Data
+import com.example.app_comedor.presentacion.screens.login.components.DataLogin
 import com.example.app_comedor.utils.ApiResult
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
-class LoginViewModel constructor(
+class LoginViewModel (
     private val useCase: UseCase
 ): ViewModel() {
 
     var loginResponse by mutableStateOf<ApiResult<ResponseBase<User>?>?>(null)
         private set
 
-    var state by mutableStateOf(Data())
+    var state by mutableStateOf(DataLogin())
         private set
 
     fun setTextEmail(it: String) {
