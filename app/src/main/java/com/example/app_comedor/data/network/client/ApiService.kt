@@ -2,6 +2,7 @@ package com.example.app_comedor.data.network.client
 
 import android.content.Context
 import com.example.app_comedor.BuildConfig
+import com.example.app_comedor.data.network.models.auth.CreateUser
 import com.example.app_comedor.data.network.response.CookieSerializable.CookieSerializable
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.data.pref.CookiesPref
@@ -22,8 +23,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.JsonElement
 import io.ktor.http.*
 import io.ktor.client.request.forms.*
+import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 import java.io.File
 
 class ApiServiceImpl constructor(
@@ -31,19 +34,39 @@ class ApiServiceImpl constructor(
     val context: Context
 ) {
 
+
     suspend inline fun <reified T> get(
         url: String,
-    ): Flow<ApiResult<T>> = flow {
+    ): Flow<ApiResult<ResponseBase<T>?>> = flow {
         emit(ApiResult.Loading())
         try {
-            emit(ApiResult.Success(httpClient.get(urlString = BuildConfig.HOST + url){
+            val cookiesSave = CookieSerializable.deserializeCookie(CookiesPref.instanceValueFlow(context).value)
+            val response = httpClient.get(urlString = BuildConfig.HOST + url) {
                 contentType(ContentType.Application.Any)
-            }.body()))
+                cookiesSave?.let {
+                    cookie(it.name, it.value, it.maxAge, it.expires, it.domain, it.path, it.secure, it.httpOnly, it.extensions)
+                }
+            }.body<ResponseBase<T>>()
+
+            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            cookies?.let {
+                CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
+            }
+            emit(
+                if (response.error == null) ApiResult.Success(response)
+                else {
+                    if (response.error.message == "Session expired") {
+                        SessionPref.setSesion(context, true)
+                    }
+                    ApiResult.Error(response.error.message)
+                }
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            emit(ApiResult.Error(e.message ?: "Something went wrong"))
+            Timber.e("EXEPTION: ${e}")
+            emit(ApiResult.Error(code(0, context)))
         }
     }
+
 
 
     suspend inline fun <reified T> post(
@@ -60,8 +83,10 @@ class ApiServiceImpl constructor(
                     cookie(it.name, it.value,it.maxAge,it.expires, it.domain, it.path, it.secure, it.httpOnly, it.extensions)
                 }
             }.body<ResponseBase<T>>()
-            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).first()
-            CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(cookies))
+            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            cookies?.let {
+                CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
+            }
             emit(
                 if (response.error == null) ApiResult.Success(response)
                 else {
@@ -75,24 +100,38 @@ class ApiServiceImpl constructor(
             emit(ApiResult.Error(code(0, context)))
         }
     }
+
+    @OptIn(InternalAPI::class)
     suspend fun postMultipart(
         url: String,
-        bodyObject: Any,
+        user: CreateUser,
         imageFile: File? = null
     ): Flow<ApiResult<ResponseBase<String>?>> = flow {
         emit(ApiResult.Loading())
         try {
             val cookiesSave = CookieSerializable.deserializeCookie(CookiesPref.instanceValueFlow(context).value)
 
-            // Serializar el objeto a JSON
-            val jsonData = Json.encodeToString(bodyObject)
-
-            // Construir el formulario multipart
             val formData = formData {
-                append("createAuthenticationDto", jsonData, Headers.build {
-                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                })
+                // Add each field from the user object individually
+                append("email", user.email)
+                append("identification", user.identification)
+                append("name", user.name)
+                append("password", user.password)
+                append("securityWord", user.securityWord)
+                append("role", user.role.toString())
 
+                // Add career IDs as individual form fields with the same name
+                user.careerIds.forEach { careerId ->
+                    append("careerIds", careerId.toString())
+                }
+
+                // Add position if not null
+                user.position?.let { append("position", it) }
+
+                // Add isActive if not null
+                user.isActive?.let { append("isActive", it.toString()) }
+
+                // Add image file if provided
                 imageFile?.let { file ->
                     append("image", file.readBytes(), Headers.build {
                         append(HttpHeaders.ContentType, ContentType.Image.Any.toString())
@@ -101,7 +140,6 @@ class ApiServiceImpl constructor(
                 }
             }
 
-            // Enviar la petición y recibir un ResponseBase<String>
             val response: ResponseBase<String> = httpClient.post(urlString = BuildConfig.HOST + url) {
                 contentType(ContentType.MultiPart.FormData)
                 setBody(MultiPartFormDataContent(formData))
@@ -110,9 +148,13 @@ class ApiServiceImpl constructor(
                 }
             }.body()
 
-            // Guardar cookies después de la petición
-            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).first()
-            CookiesPref.setInstancesPref(context, CookieSerializable.serializeCookie(cookies))
+
+
+            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            cookies?.let {
+                CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
+            }
+
 
             emit(
                 if (response.error == null) ApiResult.Success(response)
@@ -124,6 +166,7 @@ class ApiServiceImpl constructor(
                 }
             )
         } catch (e: Exception) {
+            Timber.e("ERROR ${e}")
             emit(ApiResult.Error(e.message ?: "Error en la solicitud"))
         }
     }

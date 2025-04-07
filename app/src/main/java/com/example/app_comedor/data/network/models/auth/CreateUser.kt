@@ -1,7 +1,13 @@
 package com.example.app_comedor.data.network.models.auth
-
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class Role {
+    STUDENT,
+    ADMIN,
+    EMPLOYEE
+}
 
 @Serializable
 data class CreateUser(
@@ -21,7 +27,7 @@ data class CreateUser(
     val securityWord: String,
 
     @SerialName("role")
-    val role: String, // Cambié Role a String porque en Kotlin deberás mapearlo con un Enum manualmente
+    val role: Role = Role.STUDENT, // Usamos el enum definido
 
     @SerialName("position")
     val position: String? = null,

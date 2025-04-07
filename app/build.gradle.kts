@@ -96,6 +96,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     //icons
     implementation(libs.icons)
+    //koil
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -7,6 +7,8 @@ import java.io.File
 
 class AuthUseCase constructor(val repositoryImpl: RepositoryAuthImp){
 
+    suspend fun getCarrier() = repositoryImpl.carriers()
+
     suspend fun login(params: LoginParams) = repositoryImpl.logIn(params)
 
     suspend fun register(user: CreateUser, imageFile: File?) = repositoryImpl.registerUser(user, imageFile)
