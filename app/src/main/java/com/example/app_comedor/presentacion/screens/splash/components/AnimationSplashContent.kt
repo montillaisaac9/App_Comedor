@@ -12,7 +12,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun AnimationSplashContent(
     scaleAnimation: Animatable<Float, AnimationVector1D>,
-    navController: NavController,
     durationMillisAnimation: Int,
     delayScreen: Long,
     onAnimFinish: () -> Unit

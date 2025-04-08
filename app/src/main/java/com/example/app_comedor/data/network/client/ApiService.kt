@@ -34,21 +34,22 @@ class ApiServiceImpl constructor(
     val context: Context
 ) {
 
-
+    val HOST =  "http://192.168.1.113:3000/"
+    
     suspend inline fun <reified T> get(
         url: String,
     ): Flow<ApiResult<ResponseBase<T>?>> = flow {
         emit(ApiResult.Loading())
         try {
             val cookiesSave = CookieSerializable.deserializeCookie(CookiesPref.instanceValueFlow(context).value)
-            val response = httpClient.get(urlString = BuildConfig.HOST + url) {
+            val response = httpClient.get(urlString = HOST + url) {
                 contentType(ContentType.Application.Any)
                 cookiesSave?.let {
                     cookie(it.name, it.value, it.maxAge, it.expires, it.domain, it.path, it.secure, it.httpOnly, it.extensions)
                 }
             }.body<ResponseBase<T>>()
 
-            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            val cookies = httpClient.cookies(HOST.orEmpty()).firstOrNull()
             cookies?.let {
                 CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
             }
@@ -76,14 +77,14 @@ class ApiServiceImpl constructor(
         emit(ApiResult.Loading())
         try {
             val cookiesSave = CookieSerializable.deserializeCookie(CookiesPref.instanceValueFlow(context).value)
-            val response = httpClient.post(urlString = BuildConfig.HOST + url) {
+            val response = httpClient.post(urlString = HOST + url) {
                 contentType(ContentType.Application.Json)
                 setBody(bodyJson)
                 cookiesSave?.let {
                     cookie(it.name, it.value,it.maxAge,it.expires, it.domain, it.path, it.secure, it.httpOnly, it.extensions)
                 }
             }.body<ResponseBase<T>>()
-            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            val cookies = httpClient.cookies(HOST.orEmpty()).firstOrNull()
             cookies?.let {
                 CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
             }
@@ -140,7 +141,7 @@ class ApiServiceImpl constructor(
                 }
             }
 
-            val response: ResponseBase<String> = httpClient.post(urlString = BuildConfig.HOST + url) {
+            val response: ResponseBase<String> = httpClient.post(urlString = HOST + url) {
                 contentType(ContentType.MultiPart.FormData)
                 setBody(MultiPartFormDataContent(formData))
                 cookiesSave?.let {
@@ -150,7 +151,7 @@ class ApiServiceImpl constructor(
 
 
 
-            val cookies = httpClient.cookies(BuildConfig.HOST.orEmpty()).firstOrNull()
+            val cookies = httpClient.cookies(HOST.orEmpty()).firstOrNull()
             cookies?.let {
                 CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
             }

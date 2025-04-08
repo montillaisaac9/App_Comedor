@@ -98,6 +98,8 @@ dependencies {
     implementation(libs.icons)
     //koil
     implementation("io.coil-kt:coil-compose:2.2.2")
+    // Lottie
+    implementation (libs.lottie.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

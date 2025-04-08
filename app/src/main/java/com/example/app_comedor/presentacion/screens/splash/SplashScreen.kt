@@ -33,47 +33,65 @@ fun SplashScreen(
     navController: NavHostController,
     viewModel: SplashViewModel = koinViewModel<SplashViewModel>()
 ) {
-
-    viewModel.verifyPerfil()
-
-    val perfil = viewModel.perfil
-
-    LaunchedEffect(perfil) {
-        if (perfil == null) navController.navigate("auth")
-        else navController.navigate("dashboard_graph")
+    LaunchedEffect(viewModel) {
+        viewModel.verifyUser()
     }
 
     val scaleAnimation: Animatable<Float, AnimationVector1D> =
         remember { Animatable(initialValue = 0f) }
 
-    AnimationSplashContent(
-        scaleAnimation = scaleAnimation,
-        navController = navController,
-        durationMillisAnimation = 1000,
-        delayScreen = 100L
-    ) {}
-    Column(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.tertiary)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.unerg),
-            contentDescription = stringResource(R.string.app_name),
-            tint = MaterialTheme.colorScheme.onTertiaryContainer,
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .scale(scale = scaleAnimation.value),
-        )
-        Text(
-            "Universidad Nacional Experimental de los Llanos Centrales Rómulo Gallegos.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .scale(scale = scaleAnimation.value)
-        )
+
+    if (viewModel.responseDataBase!= null){
+        AnimationSplashContent(
+            scaleAnimation = scaleAnimation,
+            durationMillisAnimation = 1000,
+            delayScreen = 100L
+        ){
+            navController.navigate(route = "dashboard_graph") {
+                popUpTo(route = Screen.SplashScreen.route) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+    } else {
+        AnimationSplashContent(
+            scaleAnimation = scaleAnimation,
+            durationMillisAnimation = 1000,
+            delayScreen = 100L
+        ) {
+            navController.navigate("auth") {
+                popUpTo(route = Screen.SplashScreen.route) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
     }
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.tertiary)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.unerg),
+                contentDescription = stringResource(R.string.app_name),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .scale(scale = scaleAnimation.value),
+            )
+            Text(
+                "Universidad Nacional Experimental de los Llanos Centrales Rómulo Gallegos.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .scale(scale = scaleAnimation.value)
+            )
+        }
+
+
 }

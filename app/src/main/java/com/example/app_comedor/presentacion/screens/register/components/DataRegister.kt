@@ -12,5 +12,5 @@ data class DataRegister(
     val careerIds: List<Int> = emptyList<Int>(),
     var errMessge : String = "",
     var image: File? = null,
-    var numberCarriers: Int = 0
+    var numberCarriers: Int = 1
 )

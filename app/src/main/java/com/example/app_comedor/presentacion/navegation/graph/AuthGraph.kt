@@ -10,30 +10,14 @@ import com.example.app_comedor.presentacion.screens.register.RegisterScreen
 
 fun NavGraphBuilder.authNavGraph(navController: NavController) {
     navigation(
-        startDestination = Screen.RegisterScreen.route,
+        startDestination = Screen.LoginScreen.route,
         route = "auth"
     ) {
         composable(Screen.LoginScreen.route) {
-            LoginScreen(
-                onNavigateToRegister = { navController.navigate(Screen.RegisterScreen.route) },
-                onNavigateToResetPassword = { navController.navigate("reset_password") },
-                onLoginSuccess = {
-                    navController.navigate("dashboard_graph") {
-                        popUpTo("auth") { inclusive = true }
-                    }
-                }
-            )
+            LoginScreen(navController = navController)
         }
         composable(Screen.RegisterScreen.route) {
-            RegisterScreen(
-                onNavigateToRegister = { navController.navigate(Screen.LoginScreen.route) },
-                onNavigateToResetPassword = { navController.navigate("reset_password") },
-                onLoginSuccess = {
-                    navController.navigate("dashboard_graph") {
-                        popUpTo("auth") { inclusive = true }
-                    }
-                }
-            )
+            RegisterScreen(navController = navController)
         }
     }
 }

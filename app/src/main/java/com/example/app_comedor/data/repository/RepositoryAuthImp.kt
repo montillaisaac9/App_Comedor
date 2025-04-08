@@ -42,4 +42,6 @@ class RepositoryAuthImp(
         )
 
     override fun getLocalPerfil(): Flow<UserEntity> = userDao.getUserFlow()
+
+    override suspend fun saveLocal(user: UserEntity) = userDao.insertUser(user)
 }

@@ -3,6 +3,7 @@ package com.example.app_comedor.presentacion.screens.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,8 +17,14 @@ import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -27,26 +34,48 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.app_comedor.R
+import com.example.app_comedor.data.network.models.auth.toDto
 import com.example.app_comedor.presentacion.common.buttons.CustomButton
 import com.example.app_comedor.presentacion.common.inputs.CustomInput
+import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
+import com.example.app_comedor.presentacion.common.snackbar.CustomSnackbar
+import com.example.app_comedor.presentacion.navegation.destination.Screen
 import com.example.app_comedor.utils.ApiResult
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    onNavigateToRegister: () -> Unit,
-    onNavigateToResetPassword: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: LoginViewModel = koinViewModel<LoginViewModel>()
 ) {
     val focusManager = LocalFocusManager.current
     val stateLogin = viewModel.state
+    val snackBarState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarState
+            ) {
+                CustomSnackbar(
+                    modifier = Modifier,
+                    title = it.visuals.message,
+                    subTitle = "",
+                    animation = R.raw.error
+                )
+            }
+        }
+    ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(paddingValues).fillMaxSize()
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,6 +128,16 @@ fun LoginScreen(
                 ) {
                     viewModel.setTextPassword(it)
                 }
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    TextButton(onClick = {
+
+                    }) {
+                        Text("Olvide mi Contraseña", color = MaterialTheme.colorScheme.primary)
+                    }
+                }
             }
             Column(
                 modifier = Modifier
@@ -112,13 +151,46 @@ fun LoginScreen(
                 ) {
                     viewModel.login()
                 }
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = {
+                        navController.navigate(Screen.RegisterScreen.route) {
+                            launchSingleTop = true
+                        }
+                    }) {
+                        Text("No tengo Cuenta", color = MaterialTheme.colorScheme.primary)
+                    }
+                }
             }
         }
     }
-    when(viewModel.loginResponse){
-        is ApiResult.Error -> TODO()
-        is ApiResult.Loading -> TODO()
-        is ApiResult.Success -> TODO()
+    when (viewModel.loginResponse) {
+        is ApiResult.Error -> {
+            LaunchedEffect(Unit) {
+                scope.launch {
+                    snackBarState.showSnackbar(
+                        message = viewModel.loginResponse?.error ?: ""
+                    )
+                }
+            }
+        }
+
+        is ApiResult.Loading -> CustomProgressBar()
+        is ApiResult.Success -> {
+            val user = viewModel.loginResponse?.data?.data  // Assuming this is your User object
+            user?.let {
+                viewModel.savePerfil(it.toDto())
+                navController.navigate(Screen.SplashScreen.route) {
+                    popUpTo("auth") {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+        }
+
         null -> {}
     }
 }

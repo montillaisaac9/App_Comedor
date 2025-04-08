@@ -6,7 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_comedor.data.network.models.auth.CreateUser
+import com.example.app_comedor.data.network.models.auth.ResponseCarriers
+import com.example.app_comedor.data.network.models.auth.User
 import com.example.app_comedor.data.network.models.auth.toSpinnerItem
+import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.presentacion.common.spinner.SpinnerItem
 import com.example.app_comedor.presentacion.screens.register.components.DataRegister
@@ -24,6 +27,12 @@ class RegisterViewModel (
 
     var listCarriers by mutableStateOf<List<SpinnerItem>>(emptyList())
 
+    var carrierRespose by mutableStateOf<ApiResult<ResponseBase<List<ResponseCarriers>>?>>(ApiResult.Loading())
+        private set
+
+    var registerResponse by mutableStateOf<ApiResult<ResponseBase<String>?>?>(null)
+        private set
+
     fun getCarriers() = viewModelScope.launch {
         useCase.auth.getCarrier().collect { result ->
             Timber.e("PETICION ${result.data}")
@@ -33,8 +42,7 @@ class RegisterViewModel (
                 is ApiResult.Success -> {
                     val a = result.data?.data?.map { it.toSpinnerItem() } ?: emptyList()
                     listCarriers = a
-                    Timber.e("LISTA convetirda ${a}")
-                    Timber.e("LISTA SETEADA ${listCarriers}")
+                    carrierRespose = result
                 }
             }
         }
@@ -82,6 +90,18 @@ class RegisterViewModel (
         state = state.copy(careerIds = updatedList)
     }
 
+    // Función para eliminar la última carrera seleccionada
+    fun removeLastCareer() {
+        if (state.numberCarriers > 1) {
+            val newNumberCarriers = state.numberCarriers - 1
+            val updatedCareerIds = state.careerIds.take(newNumberCarriers)
+            state = state.copy(
+                numberCarriers = newNumberCarriers,
+                careerIds = updatedCareerIds
+            )
+        }
+    }
+
     // Función auxiliar para obtener el SpinnerItem seleccionado a partir del id almacenado.
     fun getSelectedSpinner(index: Int): SpinnerItem? {
         return state.careerIds.getOrNull(index)?.let { careerId ->
@@ -112,17 +132,7 @@ class RegisterViewModel (
             careerIds = state.careerIds
         )
         useCase.auth.register(params, state.image).collect {
-            when(it) {
-                is ApiResult.Error -> {
-                    Timber.e("FALLO ${it.error}")
-                }
-                is ApiResult.Loading -> {
-                    Timber.e("CARGANDOOOO")
-                }
-                is ApiResult.Success -> {
-                    Timber.e("BIEEEN ${it.data?.data}")
-                }
-            }
+           registerResponse = it
         }
     }
 

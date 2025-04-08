@@ -1,5 +1,6 @@
 package com.example.app_comedor.domain.usecase.modules
 
+import com.example.app_comedor.data.db.entity.UserEntity
 import com.example.app_comedor.data.network.models.auth.CreateUser
 import com.example.app_comedor.data.network.models.auth.LoginParams
 import com.example.app_comedor.data.repository.RepositoryAuthImp
@@ -13,5 +14,7 @@ class AuthUseCase constructor(val repositoryImpl: RepositoryAuthImp){
 
     suspend fun register(user: CreateUser, imageFile: File?) = repositoryImpl.registerUser(user, imageFile)
 
-    fun getLocalePerfil() = repositoryImpl.getLocalPerfil()
+    fun getLocaleUser() = repositoryImpl.getLocalPerfil()
+
+    suspend fun saveLocalUser(user: UserEntity) = repositoryImpl.saveLocal(user)
 }

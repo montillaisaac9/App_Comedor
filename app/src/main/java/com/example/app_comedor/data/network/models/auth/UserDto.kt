@@ -1,7 +1,10 @@
 package com.example.app_comedor.data.network.models.auth
 
+import com.example.app_comedor.data.db.entity.UserEntity
 import com.example.app_comedor.data.network.models.auth.UserDTO.CareerDTO
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class UserDTO(
@@ -36,7 +39,37 @@ fun User.toDto(): UserDTO {
     )
 }
 
+fun UserDTO.toEntity(): UserEntity {
+    val careersJson = Json.encodeToString(ListSerializer(CareerDTO.serializer()), this.careers)
 
+    return UserEntity(
+        id = this.id,
+        email = this.email,
+        name = this.name,
+        identification = this.identification,
+        role = this.role,
+        securityWord = this.securityWord,
+        isActive = this.isActive,
+        photo = this.photo,
+        careers = careersJson
+    )
+}
+
+fun UserEntity.toDTO(): UserDTO {
+    val careersList = Json.decodeFromString(ListSerializer(CareerDTO.serializer()), this.careers)
+
+    return UserDTO(
+        id = this.id,
+        email = this.email,
+        name = this.name,
+        identification = this.identification,
+        role = this.role,
+        securityWord = this.securityWord,
+        isActive = this.isActive,
+        photo = this.photo,
+        careers = careersList
+    )
+}
 
 
 

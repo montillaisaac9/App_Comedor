@@ -3,10 +3,13 @@ package com.example.app_comedor.presentacion.screens.login
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_comedor.data.network.models.auth.LoginParams
 import com.example.app_comedor.data.network.models.auth.User
+import com.example.app_comedor.data.network.models.auth.UserDTO
+import com.example.app_comedor.data.network.models.auth.toEntity
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.presentacion.screens.login.components.DataLogin
@@ -33,12 +36,16 @@ class LoginViewModel (
 
     fun login() = viewModelScope.launch {
         val params = LoginParams(
-            email = state.email,
+            email = state.email.toLowerCase(),
             password = state.password
         )
         useCase.auth.login(params).collect {
             loginResponse = it
         }
+    }
+
+    fun savePerfil(user: UserDTO) = viewModelScope.launch {
+        useCase.auth.saveLocalUser(user.toEntity())
     }
 
 }

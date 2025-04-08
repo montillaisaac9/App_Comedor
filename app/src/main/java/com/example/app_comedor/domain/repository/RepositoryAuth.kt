@@ -19,4 +19,6 @@ interface RepositoryAuth {
     suspend fun registerUser(user: CreateUser, imageFile: File? = null): Flow<ApiResult<ResponseBase<String>?>>
 
     fun getLocalPerfil(): Flow<UserEntity>
+
+    suspend fun saveLocal(user: UserEntity)
 }
