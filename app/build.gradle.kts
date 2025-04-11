@@ -97,7 +97,7 @@ dependencies {
     //icons
     implementation(libs.icons)
     //koil
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     // Lottie
     implementation (libs.lottie.compose)
 

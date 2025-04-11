@@ -34,7 +34,7 @@ class ApiServiceImpl constructor(
     val context: Context
 ) {
 
-    val HOST =  "http://192.168.1.113:3000/"
+    val HOST =  "http://192.168.1.117:3000/"
     
     suspend inline fun <reified T> get(
         url: String,

@@ -11,24 +11,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.app_comedor.presentacion.navegation.destination.Screen
+import com.example.app_comedor.presentacion.screens.menu.MenuScreen
 
 // Dashboard Navigation Graph (for logged-in users)
 fun NavGraphBuilder.dashboardNavGraph(navController: NavController) {
     navigation(
-        startDestination = "dashboard",
+        startDestination = Screen.MenuScreen.route,
         route = "dashboard_graph"
     ) {
-        composable("dashboard") {
-            DashboardScreen(
-                onNavigateToProfile = { navController.navigate("profile") },
-                onNavigateToSettings = { navController.navigate("settings") },
-                onLogout = {
-                    // Navigate back to auth when logging out
-                    navController.navigate("auth") {
-                        popUpTo("dashboard_graph") { inclusive = true }
-                    }
-                }
-            )
+        composable(Screen.MenuScreen.route) {
+            MenuScreen(navController)
         }
     }
 }
