@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Scale
 import com.example.app_comedor.presentacion.screens.menu.MenuItem
 
 
@@ -42,6 +43,7 @@ fun FoodMenuItem(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(menuItem.url)
                     .crossfade(true)
+                    .scale(Scale.FILL)
                     .build(),
                 contentDescription = menuItem.title,
                 modifier = Modifier.fillMaxSize(),

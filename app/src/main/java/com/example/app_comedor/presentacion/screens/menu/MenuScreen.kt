@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.app_comedor.presentacion.common.bottomBar.BottomBarCustom
 import com.example.app_comedor.presentacion.screens.menu.components.FoodMenuItem
 import com.example.app_comedor.presentacion.theme.AppComedorTheme
 
@@ -30,7 +31,11 @@ fun MenuScreen(navController: NavController) {
         MenuItem()
     )
 
-    Scaffold{ padding ->
+    Scaffold(
+        bottomBar = {
+            BottomBarCustom(navController = navController)
+        }
+    ){ padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -59,7 +64,7 @@ fun MenuScreen(navController: NavController) {
 }
 
 data class MenuItem(
-    val url: String = "http://192.168.1.117:3000/uploads/images/dish/1742927917332-photo_2025-03-19_16-00-51.jpg",
+    val url: String = "http://172.17.12.115:3000/uploads/images/dish/1744291280332-pasta.jpeg",
     val title: String = "Arroz con pollo a la Unerg",
     val time: String = "14/04/2025 -  12:00 pm",
 )

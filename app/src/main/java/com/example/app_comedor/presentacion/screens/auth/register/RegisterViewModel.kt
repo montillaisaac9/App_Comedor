@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.register
+package com.example.app_comedor.presentacion.screens.auth.register
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +12,7 @@ import com.example.app_comedor.data.network.models.auth.toSpinnerItem
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.presentacion.common.spinner.SpinnerItem
-import com.example.app_comedor.presentacion.screens.register.components.DataRegister
+import com.example.app_comedor.presentacion.screens.auth.register.components.DataRegister
 import com.example.app_comedor.utils.ApiResult
 import kotlinx.coroutines.launch
 import timber.log.Timber

@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.splash.components
+package com.example.app_comedor.presentacion.screens.auth.splash.components
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable

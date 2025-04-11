@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.register.components
+package com.example.app_comedor.presentacion.screens.auth.register.components
 
 import java.io.File
 

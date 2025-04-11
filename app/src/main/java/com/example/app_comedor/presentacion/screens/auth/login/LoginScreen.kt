@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.login
+package com.example.app_comedor.presentacion.screens.auth.login
 
 
 import androidx.compose.foundation.layout.Arrangement

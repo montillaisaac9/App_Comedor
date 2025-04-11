@@ -3,14 +3,13 @@ package com.example.app_comedor.di
 
 import com.example.app_comedor.data.repository.RepositoryAuthImp
 import com.example.app_comedor.data.repository.RepositoryMenuImp
-import com.example.app_comedor.domain.repository.RepositoryAuth
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.domain.usecase.modules.AuthUseCase
 import com.example.app_comedor.domain.usecase.modules.MenuUseCase
-import com.example.app_comedor.presentacion.screens.login.LoginViewModel
+import com.example.app_comedor.presentacion.screens.auth.login.LoginViewModel
+import com.example.app_comedor.presentacion.screens.auth.register.RegisterViewModel
+import com.example.app_comedor.presentacion.screens.auth.splash.SplashViewModel
 import com.example.app_comedor.presentacion.screens.menu.MenuViewModel
-import com.example.app_comedor.presentacion.screens.register.RegisterViewModel
-import com.example.app_comedor.presentacion.screens.splash.SplashViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 

@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.login.components
+package com.example.app_comedor.presentacion.screens.auth.login.components
 
 data class DataLogin(
     val email: String = "",

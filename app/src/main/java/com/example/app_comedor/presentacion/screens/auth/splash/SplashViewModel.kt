@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.splash
+package com.example.app_comedor.presentacion.screens.auth.splash
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

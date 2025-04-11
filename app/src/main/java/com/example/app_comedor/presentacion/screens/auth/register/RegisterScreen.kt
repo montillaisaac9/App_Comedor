@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.register
+package com.example.app_comedor.presentacion.screens.auth.register
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -59,8 +59,8 @@ import com.example.app_comedor.presentacion.common.inputs.CustomStepperInput
 import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
 import com.example.app_comedor.presentacion.common.spinner.SpinnerTextField
 import com.example.app_comedor.presentacion.navegation.destination.Screen
-import com.example.app_comedor.presentacion.screens.register.components.HeaderUnerg
-import com.example.app_comedor.presentacion.screens.register.components.TakeCapPicture
+import com.example.app_comedor.presentacion.screens.auth.register.components.HeaderUnerg
+import com.example.app_comedor.presentacion.screens.auth.register.components.TakeCapPicture
 import com.example.app_comedor.utils.ApiResult
 import com.example.app_comedor.utils.getUriForFile
 import kotlinx.coroutines.launch

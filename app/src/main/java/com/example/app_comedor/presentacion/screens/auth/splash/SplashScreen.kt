@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.splash
+package com.example.app_comedor.presentacion.screens.auth.splash
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.app_comedor.R
 import com.example.app_comedor.presentacion.navegation.destination.Screen
-import com.example.app_comedor.presentacion.screens.splash.components.AnimationSplashContent
+import com.example.app_comedor.presentacion.screens.auth.splash.components.AnimationSplashContent
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

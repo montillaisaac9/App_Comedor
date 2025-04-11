@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.register.components
+package com.example.app_comedor.presentacion.screens.auth.register.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

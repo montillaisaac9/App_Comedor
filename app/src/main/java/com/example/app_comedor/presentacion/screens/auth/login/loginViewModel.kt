@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.login
+package com.example.app_comedor.presentacion.screens.auth.login
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +12,7 @@ import com.example.app_comedor.data.network.models.auth.UserDTO
 import com.example.app_comedor.data.network.models.auth.toEntity
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
-import com.example.app_comedor.presentacion.screens.login.components.DataLogin
+import com.example.app_comedor.presentacion.screens.auth.login.components.DataLogin
 import com.example.app_comedor.utils.ApiResult
 import kotlinx.coroutines.launch
 
