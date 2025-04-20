@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WeeklyMenuDTO(
+data class WeeklyMenu(
     @SerialName("id")
     val id: Int?,
     @SerialName("weekStart")
@@ -28,19 +28,19 @@ data class WeeklyMenuDTO(
     @SerialName("fridayId")
     val fridayId: Int?,
     @SerialName("monday")
-    val monday: DishDTO?,
+    val monday: Dish?,
     @SerialName("tuesday")
-    val tuesday: DishDTO?,
+    val tuesday: Dish?,
     @SerialName("wednesday")
-    val wednesday: DishDTO?,
+    val wednesday: Dish?,
     @SerialName("thursday")
-    val thursday: DishDTO?,
+    val thursday: Dish?,
     @SerialName("friday")
-    val friday: DishDTO?
+    val friday: Dish?
 )
 
 @Serializable
-data class DishDTO(
+data class Dish(
     @SerialName("id")
     val id: Int?,
     @SerialName("title")

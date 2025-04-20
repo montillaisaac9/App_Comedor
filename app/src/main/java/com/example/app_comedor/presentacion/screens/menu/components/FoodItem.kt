@@ -1,6 +1,8 @@
 package com.example.app_comedor.presentacion.screens.menu.components
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,15 +24,23 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
-import com.example.app_comedor.presentacion.screens.menu.MenuItem
+import com.example.app_comedor.data.network.models.menu.DishDTO
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FoodMenuItem(
-    menuItem: MenuItem,
+    menuItem: DishDTO?,
+    date: LocalDate,
     modifier: Modifier = Modifier,
     width: Float = 0.9f
 ) {
+    val formattedDate = date.format(DateTimeFormatter.ofPattern("EEEE dd/MM", Locale("es")))
+
     Card(
         modifier = modifier
             .fillMaxHeight(0.95f)
@@ -41,11 +51,11 @@ fun FoodMenuItem(
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(menuItem.url)
+                    .data(menuItem?.photo?.replace("http://localhost:3000/","http://192.168.1.117:3000/"))
                     .crossfade(true)
                     .scale(Scale.FILL)
                     .build(),
-                contentDescription = menuItem.title,
+                contentDescription = menuItem?.title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -58,7 +68,7 @@ fun FoodMenuItem(
             ) {
                 Column {
                     Text(
-                        text = menuItem.title,
+                        text = menuItem?.title?: "",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -67,7 +77,7 @@ fun FoodMenuItem(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = menuItem.time,
+                        text = formattedDate,
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(bottom = 4.dp)
