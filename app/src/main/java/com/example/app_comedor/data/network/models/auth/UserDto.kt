@@ -56,20 +56,24 @@ fun UserDTO.toEntity(): UserEntity {
 }
 
 fun UserEntity.toDTO(): UserDTO {
-    val careersList = Json.decodeFromString(ListSerializer(CareerDTO.serializer()), this.careers)
+    val careersList = Json.decodeFromString(
+        ListSerializer(CareerDTO.serializer()),
+        this.careers
+    )
 
     return UserDTO(
-        id = this.id,
-        email = this.email,
-        name = this.name,
-        identification = this.identification,
-        role = this.role,
-        securityWord = this.securityWord,
-        isActive = this.isActive,
-        photo = this.photo,
+        id = id,
+        email = email,
+        name = name,
+        identification = identification,
+        role = role,
+        securityWord = securityWord,
+        isActive = isActive,
+        photo = photo,
         careers = careersList
     )
 }
+
 
 
 

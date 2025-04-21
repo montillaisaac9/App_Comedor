@@ -10,6 +10,7 @@ import com.example.app_comedor.presentacion.screens.auth.login.LoginViewModel
 import com.example.app_comedor.presentacion.screens.auth.register.RegisterViewModel
 import com.example.app_comedor.presentacion.screens.auth.splash.SplashViewModel
 import com.example.app_comedor.presentacion.screens.menu.MenuViewModel
+import com.example.app_comedor.presentacion.screens.profile.ProfileViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -37,6 +38,7 @@ val viewModelModule = module {
     viewModel { SplashViewModel(get<UseCase>()) }
     viewModel { RegisterViewModel(get<UseCase>()) }
     viewModel { MenuViewModel(get<UseCase>()) }
+    viewModel { ProfileViewModel(get<UseCase>()) }
 }
 
 

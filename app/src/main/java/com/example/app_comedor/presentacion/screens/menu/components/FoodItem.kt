@@ -6,6 +6,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +39,8 @@ fun FoodMenuItem(
     menuItem: DishDTO?,
     date: LocalDate,
     modifier: Modifier = Modifier,
-    width: Float = 0.9f
+    width: Float = 0.9f,
+    onclick: () -> Unit = {}
 ) {
     val formattedDate = date.format(DateTimeFormatter.ofPattern("EEEE dd/MM", Locale("es")))
 
@@ -83,13 +86,18 @@ fun FoodMenuItem(
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
-                Box(
+                Button(
                     modifier = Modifier
                         .padding(8.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFFAE7B9))
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.BottomEnd),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFAE7B9),
+                        contentColor = Color(0xFF8B4513)
+                    ),
+                    onClick = {
+                        onclick()
+                    }
                 ) {
                     Text(
                         text = "ver menú",

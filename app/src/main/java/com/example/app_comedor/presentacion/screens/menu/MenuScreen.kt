@@ -100,8 +100,8 @@ fun MenuScreen(
                     if (menu != null) {
 
                         val weekStart = try {
-                            menu.weekStart?.let {
-                                menu.weekStart?.let {
+                            menu.weekStart.let {
+                                menu.weekStart.let {
                                     Instant.parse(it).atZone(ZoneId.systemDefault()).toLocalDate()
                                 }
                             }

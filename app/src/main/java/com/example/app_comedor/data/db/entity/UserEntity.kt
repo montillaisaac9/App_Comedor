@@ -8,13 +8,13 @@ import com.example.app_comedor.data.db.converter.CareerTypeConverter
 @Entity(tableName = "users")
 @TypeConverters(CareerTypeConverter::class)
 data class UserEntity(
-    @PrimaryKey val id: Int,
-    val email: String,
-    val name: String,
-    val identification: String,
-    val role: String,
-    val securityWord: String,
-    val isActive: Boolean,
-    val photo: String,
-    val careers: String
+    @PrimaryKey val id: Int = 0,
+    val email: String = "",
+    val name: String = "",
+    val identification: String = "",
+    val role: String = "",
+    val securityWord: String = "",
+    val isActive: Boolean = false,
+    val photo: String = "",
+    val careers: String = ""
 )

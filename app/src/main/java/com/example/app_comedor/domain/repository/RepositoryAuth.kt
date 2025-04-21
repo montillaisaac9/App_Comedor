@@ -21,4 +21,6 @@ interface RepositoryAuth {
     fun getLocalPerfil(): Flow<UserEntity>
 
     suspend fun saveLocal(user: UserEntity)
+
+   suspend fun deleteLocalUser()
 }

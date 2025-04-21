@@ -17,4 +17,6 @@ class AuthUseCase constructor(val repositoryImpl: RepositoryAuthImp){
     fun getLocaleUser() = repositoryImpl.getLocalPerfil()
 
     suspend fun saveLocalUser(user: UserEntity) = repositoryImpl.saveLocal(user)
+
+    suspend fun deleteLocalUser() = repositoryImpl.deleteLocalUser()
 }
