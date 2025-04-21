@@ -1,18 +1,12 @@
 package com.example.app_comedor.presentacion.screens.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.outlined.CloudUpload
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -21,9 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -55,9 +47,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = ko
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (dbUser.name != "") {
+            if (dbUser?.name != "") {
 
-                val user = dbUser.toDTO()
+                val user = dbUser?.toDTO()
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -68,9 +60,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = ko
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (user.photo != "") {
+                    if (user?.photo != "") {
                         AsyncImage(
-                            model = user.photo.replace(
+                            model = user?.photo?.replace(
                                 "http://localhost:3000/",
                                 "http://192.168.1.117:3000/"
                             ),
@@ -101,26 +93,26 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = ko
                 )
 
                 // User Info Fields
-                UserInfoField(label = "Nombre:", value = user.name)
+                UserInfoField(label = "Nombre:", value = user?.name?: "")
 
                 LazyColumn (modifier = Modifier.fillMaxWidth()){
-                    items (user.careers.size){ index ->
-                        UserInfoField(label = "Carrera:", value = user.careers[index].name)
+                    items (user?.careers?.size ?: 0){ index ->
+                        UserInfoField(label = "Carrera:", value = user?.careers[index]?.name?: "")
                     }
                 }
 
-                UserInfoField(label = "Celular:", value = user.identification)
-                UserInfoField(label = "E-mail:", value = user.email)
+                UserInfoField(label = "Celular:", value = user?.identification?: "")
+                UserInfoField(label = "E-mail:", value = user?.email?: "")
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Edit Profile Button
                 Button(
                     onClick = {
-                        viewModel.closeSession()
                         navController.navigate(Screen.SplashScreen.route) {
                             launchSingleTop = true
                         }
+                        viewModel.closeSession()
                     },
                     modifier = Modifier
                         .padding(vertical = 16.dp)

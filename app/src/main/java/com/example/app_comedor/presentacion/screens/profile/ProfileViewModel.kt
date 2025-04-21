@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val useCase: UseCase
 ): ViewModel() {
-
-    var responseDataBase by mutableStateOf<UserEntity>(UserEntity())
+    // Ahora es nullable, inicializado a null
+    var responseDataBase by mutableStateOf<UserEntity?>(null)
         private set
 
     init {
@@ -22,8 +22,8 @@ class ProfileViewModel(
     }
 
     fun getUser() = viewModelScope.launch {
-        useCase.auth.getLocaleUser().collect {
-            responseDataBase = it
+        useCase.auth.getLocaleUser().collect { user ->
+            responseDataBase = user    // puede ser null si no hay dato
         }
     }
 
