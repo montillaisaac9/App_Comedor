@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.app_comedor.data.network.models.menu.DishDTO
+import com.example.app_comedor.utils.HOST
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -54,7 +55,7 @@ fun FoodMenuItem(
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(menuItem?.photo?.replace("http://localhost:3000/","http://192.168.1.117:3000/"))
+                    .data(menuItem?.photo?.replace("http://localhost:3000/",HOST))
                     .crossfade(true)
                     .scale(Scale.FILL)
                     .build(),

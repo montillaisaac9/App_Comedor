@@ -24,6 +24,7 @@ import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
 import com.example.app_comedor.presentacion.common.topBar.CustomTopBar
 import com.example.app_comedor.presentacion.navegation.destination.Screen
 import com.example.app_comedor.presentacion.screens.profile.components.UserInfoField
+import com.example.app_comedor.utils.HOST
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -64,7 +65,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = ko
                         AsyncImage(
                             model = user?.photo?.replace(
                                 "http://localhost:3000/",
-                                "http://192.168.1.117:3000/"
+                                HOST
                             ),
                             contentDescription = "Imagen de Perfil",
                             contentScale = ContentScale.Crop,
