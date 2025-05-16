@@ -17,16 +17,8 @@ data class WeeklyMenu(
     val createdAt: String?,
     @SerialName("updatedAt")
     val updatedAt: String?,
-    @SerialName("mondayId")
-    val mondayId: Int?,
-    @SerialName("tuesdayId")
-    val tuesdayId: Int?,
-    @SerialName("wednesdayId")
-    val wednesdayId: Int?,
-    @SerialName("thursdayId")
-    val thursdayId: Int?,
-    @SerialName("fridayId")
-    val fridayId: Int?,
+    @SerialName("menuItems")
+    val menuItems: List<MenuItem>?,
     @SerialName("monday")
     val monday: Dish?,
     @SerialName("tuesday")
@@ -37,6 +29,22 @@ data class WeeklyMenu(
     val thursday: Dish?,
     @SerialName("friday")
     val friday: Dish?
+)
+
+@Serializable
+data class MenuItem(
+    @SerialName("id")
+    val id: Int?,
+    @SerialName("date")
+    val date: String?,
+    @SerialName("weekDay")
+    val weekDay: String?,
+    @SerialName("dish")
+    val dish: Dish?,
+    @SerialName("createdAt")
+    val createdAt: String?,
+    @SerialName("updatedAt")
+    val updatedAt: String?
 )
 
 @Serializable

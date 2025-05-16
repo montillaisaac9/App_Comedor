@@ -14,6 +14,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.app_comedor.presentacion.navegation.destination.Screen
+import com.example.app_comedor.presentacion.screens.dish.DishScreen
 import com.example.app_comedor.presentacion.screens.menu.MenuScreen
 import com.example.app_comedor.presentacion.screens.profile.ProfileScreen
 
@@ -30,19 +31,9 @@ fun NavGraphBuilder.dashboardNavGraph(navController: NavController) {
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(navController)
         }
+        composable("Dish_Screen/{id}") { backStackEntry ->
+            val dishId = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
+            DishScreen(navController, dishId)
+        }
     }
-}
-
-// Screen Composables
-@Composable
-fun DashboardScreen(
-    onNavigateToProfile: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    onLogout: () -> Unit
-) {
-    Column (modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){     Text("DASHBOARD") }
-
 }

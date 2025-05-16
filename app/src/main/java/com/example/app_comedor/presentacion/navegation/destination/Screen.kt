@@ -6,4 +6,5 @@ sealed class Screen(val route:String) {
     data object SplashScreen: Screen("splash_Screen")
     data object MenuScreen: Screen("Menu_Screen")
     data object ProfileScreen: Screen("Profile_Screen")
+    data class DishScreen(val id: Int): Screen("Dish_Screen/$id")
 }

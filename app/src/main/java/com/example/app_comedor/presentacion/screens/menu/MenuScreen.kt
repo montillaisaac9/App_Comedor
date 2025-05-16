@@ -26,15 +26,12 @@ import com.example.app_comedor.data.network.models.menu.toDto
 import com.example.app_comedor.presentacion.common.bottomBar.BottomBarCustom
 import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
 import com.example.app_comedor.presentacion.common.snackbar.CustomSnackbar
+import com.example.app_comedor.presentacion.navegation.destination.Screen
 import com.example.app_comedor.presentacion.screens.menu.components.FoodMenuItem
 import com.example.app_comedor.utils.ApiResult
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -65,11 +62,44 @@ fun MenuScreen(
     ) { padding ->
         when (response) {
             is ApiResult.Error -> {
+                viewModel.getLocalMenu()
+                val menu = viewModel.localMenu
+                Timber.e("menu local ${menu}")
                 LaunchedEffect(Unit) {
                     scope.launch {
                         snackBarState.showSnackbar(
                             message = response.error ?: ""
                         )
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .background(MaterialTheme.colorScheme.background),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "App Comedor Estudiantil Unerg",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 40.dp),
+                        text = "Menu Semanal",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                        items(menu.size) { index ->
+                            FoodMenuItem(
+                                menuItem = menu[index],
+                                modifier = Modifier.padding(8.dp),
+                                onclick = {
+                                    navController.navigate("Dish_Screen/${menu[index].dish?.id}")
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -98,33 +128,15 @@ fun MenuScreen(
                     )
 
                     if (menu != null) {
-
-                        val weekStart = try {
-                            menu.weekStart.let {
-                                menu.weekStart.let {
-                                    Instant.parse(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                                }
-                            }
-                        } catch (e: Exception) {
-                            null
-                        }
-
-                        val dishesWithDate = weekStart?.let { start ->
-                            listOf(
-                                start to menu.monday,
-                                start.plusDays(1) to menu.tuesday,
-                                start.plusDays(2) to menu.wednesday,
-                                start.plusDays(3) to menu.thursday,
-                                start.plusDays(4) to menu.friday
-                            )
-                        } ?: emptyList()
-
+                        viewModel.saveLocalMenu(menu.menuItems)
                         LazyRow(modifier = Modifier.fillMaxWidth()) {
-                            items(dishesWithDate.size) { index ->
+                            items(menu.menuItems.size) { index ->
                                 FoodMenuItem(
-                                    menuItem = dishesWithDate[index].second,
-                                    date = dishesWithDate[index].first,
-                                    modifier = Modifier.padding(8.dp)
+                                    menuItem = menu.menuItems[index],
+                                    modifier = Modifier.padding(8.dp),
+                                    onclick = {
+                                        navController.navigate("Dish_Screen/${menu.menuItems[index].dish?.id}")
+                                    }
                                 )
                             }
                         }

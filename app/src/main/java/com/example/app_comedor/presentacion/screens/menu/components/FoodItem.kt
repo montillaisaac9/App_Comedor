@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.app_comedor.data.network.models.menu.DishDTO
+import com.example.app_comedor.data.network.models.menu.MenuItemDTO
 import com.example.app_comedor.utils.HOST
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,29 +38,29 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FoodMenuItem(
-    menuItem: DishDTO?,
-    date: LocalDate,
+    menuItem: MenuItemDTO,
     modifier: Modifier = Modifier,
     width: Float = 0.9f,
     onclick: () -> Unit = {}
 ) {
-    val formattedDate = date.format(DateTimeFormatter.ofPattern("EEEE dd/MM", Locale("es")))
+    val formattedDate = menuItem.date.format(DateTimeFormatter.ofPattern("EEEE dd/MM", Locale("es")))
 
     Card(
         modifier = modifier
             .fillMaxHeight(0.95f)
             .width((LocalConfiguration.current.screenWidthDp.dp * width.toFloat()).coerceAtMost(LocalConfiguration.current.screenWidthDp.dp)),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        onClick = onclick
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(menuItem?.photo?.replace("http://localhost:3000/",HOST))
+                    .data(menuItem.dish?.photo?.replace("http://localhost:3000/",HOST))
                     .crossfade(true)
                     .scale(Scale.FILL)
                     .build(),
-                contentDescription = menuItem?.title,
+                contentDescription = menuItem.dish?.title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -72,7 +73,7 @@ fun FoodMenuItem(
             ) {
                 Column {
                     Text(
-                        text = menuItem?.title?: "",
+                        text = menuItem.dish?.title?: "",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(bottom = 4.dp)

@@ -16,5 +16,13 @@ val RoomModule = module {
             "app_database"
         ).build()
     }
-    single { get<DataBase>().getUserDao() }
+    single {
+        get<DataBase>().getUserDao() // Provide UserDao
+    }
+    single {
+        get<DataBase>().getMenuItemDao() // Provide MenuItemDao
+    }
+    single {
+        get<DataBase>().getDishDao() // Provide DishDao
+    }
 }
