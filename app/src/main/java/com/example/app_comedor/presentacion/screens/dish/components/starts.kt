@@ -22,105 +22,117 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlin.math.roundToInt
 import android.media.MediaPlayer
+import android.util.Log
+import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import com.example.app_comedor.R
-
+import timber.log.Timber
 @Composable
 fun AnimatedStarRating(
     initialRating: Float = 0f,
     onRatingChanged: (Float) -> Unit = {},
     starSize: Int = 30,
     starSpacing: Int = 4,
-    starColor: Color = MaterialTheme.colorScheme.primary,
-    starBorderColor: Color = Color.LightGray,
-    animationDuration: Int = 100,
+    starColor: Color = MaterialTheme.colorScheme.primary, // Color de relleno para la estrella llena
+    starBorderColor: Color = Color.LightGray, // Color para la estrella de contorno (vacía)
+    animationDuration: Int = 300, // Duración de la animación de llenado
     enableSound: Boolean = true
 ) {
     val context = LocalContext.current
-    var size by remember { mutableStateOf(IntSize.Zero) }
+    val density = LocalDensity.current
 
-    // Sonidos para diferentes calificaciones
-    val starClickSound = remember { MediaPlayer.create(context, R.raw.shine) }
+    val starClickSound = remember(context) {
+        try {
+            MediaPlayer.create(context, R.raw.shine)
+        } catch (e: Exception) {
+            Log.e("AnimatedStarRating", "Error creating MediaPlayer", e)
+            null
+        }
+    }
 
-    // Estado para la calificación actual con precisión decimal
-    var rating by remember { mutableStateOf(initialRating) }
+    var rating by remember { mutableStateOf(initialRating.coerceIn(0f, 5f)) }
 
-    // Estado para las animaciones de cada estrella
     val fillAnimations = remember {
         List(5) { index ->
-            val initialValue = when {
+            val initialFill = when {
                 index + 1 <= initialRating.toInt() -> 1f
                 index < initialRating && index + 1 > initialRating -> initialRating - index
                 else -> 0f
             }
-            Animatable(initialValue)
+            Animatable(initialFill.coerceIn(0f, 1f))
         }
     }
 
-    // Actualizar las animaciones cuando cambia la calificación
     LaunchedEffect(rating) {
         onRatingChanged(rating)
+        fillAnimations.forEachIndexed { index, animatable ->
+            val targetFill = when {
+                index + 1 <= rating.toInt() -> 1f
+                index < rating && index + 1 > rating -> (rating - index).coerceIn(0f, 1f)
+                else -> 0f
+            }
+            if (animatable.value != targetFill) {
+                animatable.animateTo(
+                    targetValue = targetFill,
+                    animationSpec = tween(
+                        durationMillis = animationDuration,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+        }
+    }
 
-        // Reproducir sonido cuando se cambia la calificación
-        if (enableSound) {
+    fun playSound() {
+        if (enableSound && starClickSound != null) {
             try {
+                if (starClickSound.isPlaying) {
+                    starClickSound.stop()
+                    starClickSound.prepare()
+                }
                 starClickSound.seekTo(0)
                 starClickSound.start()
             } catch (e: Exception) {
-                // Manejar excepciones de reproducción de sonido
+                Log.e("AnimatedStarRating", "Error playing sound", e)
             }
-        }
-
-        // Animar cada estrella individualmente
-        fillAnimations.forEachIndexed { index, animatable ->
-            val targetValue = when {
-                index + 1 <= rating.toInt() -> 1f
-                index < rating && index + 1 > rating -> rating - index
-                else -> 0f
-            }
-
-            animatable.animateTo(
-                targetValue = targetValue,
-                animationSpec = tween(
-                    durationMillis = animationDuration,
-                    easing = FastOutSlowInEasing
-                )
-            )
         }
     }
 
     Column {
-        Box(
-            modifier = Modifier
-                .onGloballyPositioned { coordinates ->
-                    size = coordinates.size
-                }
-                .padding(vertical = 8.dp)
-        ) {
+        Box(modifier = Modifier.padding(vertical = 8.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .pointerInput(Unit) {
-                        detectHorizontalDragGestures { change, dragAmount ->
-                            change.consume()
-                            val starWidth = (starSize + starSpacing)
-                            val position = change.position.x / starWidth
+                modifier = Modifier.pointerInput(Unit) {
+                    detectHorizontalDragGestures { change, _ ->
+                        change.consume()
+                        val starTotalWidthPx = with(density) { (starSize.dp + starSpacing.dp).toPx() }
+                        if (starTotalWidthPx == 0f) return@detectHorizontalDragGestures
 
-                            // Calcular calificación con un decimal
-                            val newRating = (position * 10).roundToInt() / 10f
-                            rating = newRating.coerceIn(0f, 5f)
+                        val rawPosition = change.position.x / starTotalWidthPx
+                        // Ajustar para que el cálculo del rating sea más intuitivo al arrastrar sobre una estrella
+                        // (cada estrella ocupa una unidad de 'rawPosition')
+                        val newCalculatedRating = (rawPosition * 10).roundToInt() / 10f
+                        val newCoercedRating = newCalculatedRating.coerceIn(0f, 5f)
+
+                        if (newCoercedRating != rating) {
+                            rating = newCoercedRating
+                            playSound()
                         }
                     }
+                }
             ) {
-                // Estrellas interactivas con animación de llenado
                 for (i in 1..5) {
+                    val starIndex = i - 1
                     Box(
                         modifier = Modifier
                             .size(starSize.dp)
-                            .padding(end = starSpacing.dp)
+                            .padding(end = if (i < 5) starSpacing.dp else 0.dp)
                     ) {
-                        // Estrella vacía (contorno)
+                        // Estrella vacía (contorno) - Capa inferior
                         Icon(
                             imageVector = Icons.Outlined.Star,
                             contentDescription = "Estrella $i vacía",
@@ -130,43 +142,47 @@ fun AnimatedStarRating(
                                 .zIndex(1f)
                         )
 
-                        // Estrella llena con animación de ancho
-                        val fillLevel = fillAnimations[i-1].value
+                        // Estrella llena (SVG) - Capa intermedia, recortada dinámicamente
+                        val fillLevel = fillAnimations[starIndex].value
                         if (fillLevel > 0f) {
-                            Box(
+                            Icon(
+                                painter = painterResource(R.drawable.star24px), // ESTE DEBE SER UN SVG DE ESTRELLA RELLENA
+                                contentDescription = "Estrella $i llena (fracción: ${String.format("%.2f", fillLevel)})",
+                                tint = starColor, // El color de la parte rellena
                                 modifier = Modifier
-                                    .fillMaxWidth(fillLevel)
-                                    .fillMaxHeight()
-                                    .zIndex(2f)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = "Estrella $i llena",
-                                    tint = starColor,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
+                                    .fillMaxSize() // El Icono intenta llenar el Box de la celda de estrella
+                                    .graphicsLayer( // Aplicamos el recorte aquí
+                                        clip = true, // Habilitar recorte
+                                        shape = GenericShape { size, _ ->
+                                            addRect(Rect(left = 0f, top = 0f, right = size.width * fillLevel, bottom = size.height))
+                                        }
+                                    )
+                                    .zIndex(2f) // Encima del contorno
+                            )
                         }
 
-                        // Área clickeable por encima de todo
+                        // Área clickeable - Capa superior
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .zIndex(3f)
+                                .zIndex(3f) // Encima de todo para asegurar la detección del clic
                                 .clickable {
-                                    // Alternar entre valores completos, mitad y cuartos
-                                    rating = when {
-                                        (rating > i - 0.25f && rating < i + 0.25f) -> i - 0.5f
-                                        (rating >= i - 0.5f && rating <= i - 0.26f) -> i - 0.25f
-                                        (rating >= i - 0.75f && rating <= i - 0.51f) -> i - 0.75f
+                                    val oldRating = rating
+                                    val newClickedRating = when { // Tu lógica de clic original
+                                        (oldRating > i - 0.25f && oldRating < i + 0.25f) -> i - 0.5f
+                                        (oldRating >= i - 0.5f && oldRating <= i - 0.26f) -> i - 0.25f
+                                        (oldRating >= i - 0.75f && oldRating <= i - 0.51f) -> i - 0.75f
                                         else -> i.toFloat()
+                                    }.coerceIn(0f, 5f)
+
+                                    if (newClickedRating != oldRating) {
+                                        rating = newClickedRating
+                                        playSound()
                                     }
                                 }
                         )
                     }
                 }
-
-                // Mostrar el valor numérico de la calificación
                 Text(
                     text = String.format("%.1f", rating),
                     fontSize = 16.sp,
@@ -178,10 +194,9 @@ fun AnimatedStarRating(
         }
     }
 
-    // Liberar recursos cuando se desmonte el componente
     DisposableEffect(Unit) {
         onDispose {
-            starClickSound.release()
+            starClickSound?.release()
         }
     }
 }

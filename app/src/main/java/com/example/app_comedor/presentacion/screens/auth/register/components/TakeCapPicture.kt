@@ -46,15 +46,9 @@ fun TakeCapPicture(
     onImageSelected: (File) -> Unit
 ) {
     val context = LocalContext.current
-
-    // Estado para mostrar el ModalBottomSheet
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    // Creamos un archivo temporal para la cámara y obtenemos su Uri mediante FileProvider
     val tempImageFile = remember { createImageFile(context) }
     val tempImageUri = remember { getUriForFile(context, tempImageFile) }
-
-    // Launcher para cámara (usando TakePicture)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             onImageSelected(tempImageFile)
@@ -62,8 +56,6 @@ fun TakeCapPicture(
             Toast.makeText(context, "Error al tomar la foto", Toast.LENGTH_LONG).show()
         }
     }
-
-    // Launcher para seleccionar imagen de la galería
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri == null) {
             Toast.makeText(context, "No se seleccionó ninguna imagen", Toast.LENGTH_LONG).show()
@@ -76,8 +68,6 @@ fun TakeCapPicture(
             }
         }
     }
-
-    // Launcher para solicitar permiso de cámara
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             cameraLauncher.launch(tempImageUri)
@@ -85,8 +75,6 @@ fun TakeCapPicture(
             Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_LONG).show()
         }
     }
-
-    // Componente que muestra la imagen (o ícono) y es clickable para abrir el BottomSheet
     Box(
         modifier = modifier
             .size(150.dp)
