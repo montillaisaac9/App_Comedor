@@ -11,6 +11,7 @@ data class DishEntity(
     val description: String,
     val photo: String,
     val votesCount: Int,
+    val averageRating: Float,
     val calories: Int,
     val cost: Double,
     val carbohydrates: Int,

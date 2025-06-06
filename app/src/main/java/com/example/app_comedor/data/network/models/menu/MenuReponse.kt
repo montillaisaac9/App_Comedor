@@ -57,6 +57,8 @@ data class Dish(
     val description: String?,
     @SerialName("photo")
     val photo: String?,
+    @SerialName("averageRating")
+    val averageRating: Float?,
     @SerialName("votesCount")
     val votesCount: Int?,
     @SerialName("calories")

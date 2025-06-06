@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
@@ -31,14 +32,16 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RatingBottomSheet(
+    oldScore: Float?,
+    oldComment: String?,
     onDismiss: () -> Unit,
     onSubmit: (rating: Float, comment: String) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    var rating by remember { mutableStateOf(0.0f) }
-    var comment by remember { mutableStateOf("") }
+    var rating by remember { mutableFloatStateOf(oldScore?: 0.0f) }
+    var comment by remember { mutableStateOf(oldComment?: "") }
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
@@ -81,32 +84,8 @@ fun RatingBottomSheet(
                     },
                     starSize = 40,
                     starColor = Color(0xFFFFD700), // Color dorado
+                    clickable = true
                 )
-
-/*                for (i in 1..5) {
-                    val isFilled = i <= rating
-                    Box(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .padding(end = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isFilled) Icons.Filled.Star else Icons.Outlined.Star,
-                            contentDescription = "Estrella $i",
-                            tint = if (isFilled) MaterialTheme.colorScheme.onBackground else Color.LightGray,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable {
-
-                                }
-                        )
-                    }
-                }*/
-
                 Text(
                     text = String.format("%.1f", rating),
                     fontSize = 16.sp,
@@ -136,7 +115,7 @@ fun RatingBottomSheet(
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = comment,
                     onValueChange = { comment = it },
                     placeholder = { Text("email@domain.com") },
@@ -144,11 +123,23 @@ fun RatingBottomSheet(
                         .fillMaxWidth()
                         .height(150.dp)
                         .clip(RoundedCornerShape(8.dp)),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                        focusedContainerColor = MaterialTheme.colorScheme.background,
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
-                        focusedIndicatorColor = MaterialTheme.colorScheme.background
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        focusedLabelColor =  MaterialTheme.colorScheme.primary,
+                        focusedPlaceholderColor =  MaterialTheme.colorScheme.onBackground,
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor =  MaterialTheme.colorScheme.onPrimary,
+                        disabledBorderColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectionColors = TextSelectionColors(
+                            handleColor = MaterialTheme.colorScheme.primary,
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        )
                     )
                 )
             }
@@ -181,7 +172,7 @@ fun RatingBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "enviar",
+                        text = if (oldScore != null && oldComment != null) "Actualizar" else "Enviar",
                         color = Color.Black
                     )
                 }
@@ -264,56 +255,4 @@ fun CustomAlertDialog(
             }
         }
     }
-}
-
-/**
- * Ejemplo de uso de los componentes
- */
-@Composable
-fun ExampleUsage() {
-    var showRatingSheet by remember { mutableStateOf(false) }
-    var showAlert by remember { mutableStateOf(false) }
-    var alertMessage by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(onClick = { showRatingSheet = true }) {
-            Text("Mostrar Rating BottomSheet")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = {
-            alertMessage = "Gracias, por Confirmar su Asistencia. Lo añadiremos a la lista de hoy"
-            showAlert = true
-        }) {
-            Text("Mostrar Alerta")
-        }
-    }
-
-    // BottomSheet para puntuar
-    if (showRatingSheet) {
-        RatingBottomSheet(
-            onDismiss = { showRatingSheet = false },
-            onSubmit = { rating, comment ->
-                showRatingSheet = false
-                alertMessage = "Gracias por tu calificación de $rating estrellas!"
-                showAlert = true
-            }
-        )
-    }
-
-    // Alerta personalizable
-    CustomAlertDialog(
-        show = showAlert,
-        message = alertMessage,
-        icon = Icons.Default.Person,
-        buttonText = "Aceptar",
-        onDismiss = { showAlert = false }
-    )
 }

@@ -96,7 +96,9 @@ fun MenuScreen(
                                 menuItem = menu[index],
                                 modifier = Modifier.padding(8.dp),
                                 onclick = {
-                                    navController.navigate("Dish_Screen/${menu[index].dish?.id}")
+                                    navController.navigate("Dish_Screen/${menu[index].dish?.id}"){
+                                        launchSingleTop = true
+                                    }
                                 }
                             )
                         }

@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.unit.IntSize
 import com.example.app_comedor.R
 import timber.log.Timber
@@ -40,7 +41,8 @@ fun AnimatedStarRating(
     starColor: Color = MaterialTheme.colorScheme.primary, // Color de relleno para la estrella llena
     starBorderColor: Color = Color.LightGray, // Color para la estrella de contorno (vacía)
     animationDuration: Int = 300, // Duración de la animación de llenado
-    enableSound: Boolean = true
+    enableSound: Boolean = true,
+    clickable: Boolean = false
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -103,10 +105,13 @@ fun AnimatedStarRating(
     }
 
     Column {
-        Box(modifier = Modifier.padding(vertical = 8.dp)) {
+        Box(modifier = Modifier
+            .padding(vertical = 8.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.pointerInput(Unit) {
+                modifier = Modifier
+                    .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, _ ->
                         change.consume()
                         val starTotalWidthPx = with(density) { (starSize.dp + starSpacing.dp).toPx() }
@@ -167,6 +172,7 @@ fun AnimatedStarRating(
                                 .fillMaxSize()
                                 .zIndex(3f) // Encima de todo para asegurar la detección del clic
                                 .clickable {
+                                    if (!clickable) return@clickable
                                     val oldRating = rating
                                     val newClickedRating = when { // Tu lógica de clic original
                                         (oldRating > i - 0.25f && oldRating < i + 0.25f) -> i - 0.5f

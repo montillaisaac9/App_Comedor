@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.JsonElement
 import io.ktor.http.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.request.patch
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -100,6 +101,40 @@ class ApiServiceImpl constructor(
             emit(ApiResult.Error(code(0, context)))
         }
     }
+
+
+    suspend inline fun <reified T> patch(
+        url: String,
+        bodyJson: JsonElement,
+    ): Flow<ApiResult<ResponseBase<T>?>> = flow {
+        emit(ApiResult.Loading())
+        try {
+            val cookiesSave = CookieSerializable.deserializeCookie(CookiesPref.instanceValueFlow(context).value)
+            val response = httpClient.patch(urlString = HOST + url) {
+                contentType(ContentType.Application.Json)
+                setBody(bodyJson)
+                cookiesSave?.let {
+                    cookie(it.name, it.value,it.maxAge,it.expires, it.domain, it.path, it.secure, it.httpOnly, it.extensions)
+                }
+            }.body<ResponseBase<T>>()
+            val cookies = httpClient.cookies(HOST.orEmpty()).firstOrNull()
+            cookies?.let {
+                CookiesPref.setInstancesPref(context = context, CookieSerializable.serializeCookie(it))
+            }
+            emit(
+                if (response.error == null) ApiResult.Success(response)
+                else {
+                    if (response.error.message == "Session expired"){
+                        SessionPref.setSesion(context, true)
+                    }
+                    ApiResult.Error(response.error.message)
+                }
+            )
+        } catch (e: Exception) {
+            emit(ApiResult.Error(code(0, context)))
+        }
+    }
+
 
     @OptIn(InternalAPI::class)
     suspend fun postMultipart(

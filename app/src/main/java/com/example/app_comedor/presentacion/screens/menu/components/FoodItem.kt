@@ -1,6 +1,7 @@
 package com.example.app_comedor.presentacion.screens.menu.components
 
 
+import AnimatedStarRating
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -86,6 +87,13 @@ fun FoodMenuItem(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    AnimatedStarRating(
+                        initialRating = menuItem.dish?.averageRating?.toFloat()?: 0f,
+                        onRatingChanged = { it ->
+                        },
+                        starSize = 30,
+                        starColor = Color(0xFFFFD700), // Color dorado
                     )
                 }
                 Button(

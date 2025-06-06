@@ -12,6 +12,7 @@ data class DishDTO(
     val photo: String = "",
     val votesCount: Int = 0,
     val calories: Int = 0,
+    val averageRating: Float = 0.0F,
     val cost: Double = 0.0,
     val carbohydrates: Int = 0,
     val proteins: Int = 0,
@@ -43,6 +44,7 @@ fun Dish.toDto(): DishDTO = DishDTO(
     description  = this.description ?: "",
     photo        = this.photo ?: "",
     votesCount   = this.votesCount ?: 0,
+    averageRating = this.averageRating ?: 0.0f,
     calories     = this.calories ?: 0,
     cost         = this.cost ?: 0.0,
     carbohydrates= this.carbohydrates ?: 0,
@@ -77,7 +79,8 @@ fun DishDTO.toEntity(): DishEntity = DishEntity(
     cost          = this.cost,
     carbohydrates = this.carbohydrates,
     proteins      = this.proteins,
-    fats          = this.fats
+    fats          = this.fats,
+    averageRating = this.averageRating
 )
 
 // --- Mapeo de MenuItemDTO a MenuItemEntity ---
@@ -99,6 +102,7 @@ fun DishEntity.toDto(): DishDTO = DishDTO(
     votesCount    = this.votesCount,
     calories      = this.calories,
     cost          = this.cost,
+    averageRating = this.averageRating,
     carbohydrates = this.carbohydrates,
     proteins      = this.proteins,
     fats          = this.fats

@@ -1,4 +1,4 @@
-package com.example.app_comedor.data.network.models.dish
+package com.example.app_comedor.data.network.models.dish.params
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -12,6 +12,6 @@ data class CreateScore (
     val dishId: Int,
 
     @SerialName("rating")
-    val rating: Int,
+    val rating: Float,
 
 )
