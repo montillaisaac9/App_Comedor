@@ -78,6 +78,14 @@ class DishViewModel(
         }
     }
 
+    fun submitRating(rating: Float, comment: String) {
+        if (oldScore != null && oldComment != null) {
+            editScoreAndComment(rating, comment)
+        } else {
+            sendScoreAndComment(rating, comment)
+        }
+    }
+
     fun sendScoreAndComment(rating: Float, comment: String) = viewModelScope.launch {
         val score = CreateScore(
             userId = useCase.auth.getLocaleUser().first().id,
@@ -220,5 +228,6 @@ class DishViewModel(
                 )
             )
         else responseScoreCreateAndComment = null
+        findScoreAndComment()
     }
 }

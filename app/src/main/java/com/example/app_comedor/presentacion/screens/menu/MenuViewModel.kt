@@ -22,9 +22,6 @@ class MenuViewModel(
         private set
     var localMenu by mutableStateOf<List<MenuItemDTO>>(emptyList())
         private set
-    init {
-        getMenu()
-    }
 
     fun getMenu() = viewModelScope.launch {
         useCase.menu.getWeeklyMenu().collect {

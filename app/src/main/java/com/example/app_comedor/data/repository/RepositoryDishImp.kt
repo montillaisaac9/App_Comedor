@@ -48,15 +48,15 @@ class RepositoryDishImp(
         )
 
     override suspend fun editScore(score: EditScore, id: Int): Flow<ApiResult<ResponseBase<ScoreResponse>?>> =
-        apiService.post<ScoreResponse>(
-            url = "comment/userDish/$id",
+        apiService.patch<ScoreResponse>(
+            url = "dish-ratting/$id",
             bodyJson = Json.encodeToJsonElement(score)
         )
 
 
     override suspend fun editComment(newComment: EditComment, id: Int): Flow<ApiResult<ResponseBase<CommentResponse>?>> =
-        apiService.post<CommentResponse>(
-            url = "comment/userDish/$id",
+        apiService.patch<CommentResponse>(
+            url = "comment/$id",
             bodyJson = Json.encodeToJsonElement(newComment)
         )
 

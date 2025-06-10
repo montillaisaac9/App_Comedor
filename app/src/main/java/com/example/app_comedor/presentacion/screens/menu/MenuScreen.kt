@@ -43,6 +43,10 @@ fun MenuScreen(
     val snackBarState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(true) {
+        viewModel.getMenu()
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(

@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -240,10 +241,11 @@ fun DishScreen(
                     ) {
                         // Estrellas
                         AnimatedStarRating(
-                            initialRating = dish.averageRating,
+                            initialRating = viewModel.oldScore?.rating?.toFloat() ?: dish.averageRating,
                             onRatingChanged = {},
                             starSize = 20,
                             starColor = Color(0xFFFFD700), // Color dorado
+                            clickable = true
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -323,18 +325,7 @@ fun DishScreen(
                     oldComment = viewModel.oldComment?.text,
                     onDismiss = { showRatingSheet = false },
                     onSubmit = { rating, comment ->
-                        if (viewModel.oldScore != null && viewModel.oldComment != null) {
-                            viewModel.editScoreAndComment(
-                                rating = rating,
-                                comment = comment,
-                            )
-                        } else {
-                            viewModel.sendScoreAndComment(
-                                rating = rating,
-                                comment = comment
-                            )
-                        }
-                        viewModel.sendScoreAndComment(rating, comment)
+                        viewModel.submitRating(rating, comment)
                         showRatingSheet = false
                         showRatingSuccessAlert = true
                     }
@@ -354,6 +345,7 @@ fun DishScreen(
         is ApiResult.Success -> {
             showRatingSuccessAlert = true
             message = responseCreateScoreAndComment.data?.data ?: ""
+            navController.popBackStack()
         }
         null -> {}
     }
