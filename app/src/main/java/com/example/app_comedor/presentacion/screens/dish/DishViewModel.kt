@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_comedor.data.network.models.dish.CommentResponse
 import com.example.app_comedor.data.network.models.dish.ScoreResponse
+import com.example.app_comedor.data.network.models.dish.params.CreateAttendance
 import com.example.app_comedor.data.network.models.dish.params.CreateComment
 import com.example.app_comedor.data.network.models.dish.params.CreateScore
 import com.example.app_comedor.data.network.models.dish.params.EditComment
@@ -17,6 +18,7 @@ import com.example.app_comedor.data.network.models.menu.toDto
 import com.example.app_comedor.data.network.response.ResponseBase
 import com.example.app_comedor.domain.usecase.UseCase
 import com.example.app_comedor.utils.ApiResult
+import com.example.app_comedor.utils.ApiResult.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,9 +30,11 @@ class DishViewModel(
     var dish by mutableStateOf<DishDTO?>(null)
         private set
 
-    var responseScoreCreateAndComment by mutableStateOf<ApiResult<ResponseBase<String>?>?>(null)
+    var responseScoreCreateAttendaceComment by mutableStateOf<ApiResult<ResponseBase<String>?>?>(null)
+    var responseCreateAttendance by mutableStateOf<ApiResult<ResponseBase<String>?>?>(null)
     var oldScore by mutableStateOf<ScoreResponse?>(null)
     var oldComment by mutableStateOf<CommentResponse?>(null)
+    var isAttendance by mutableStateOf(false)
 
     fun getLocalDish(id: Int) = viewModelScope.launch {
         useCase.dish.getLocalDish(id).collect {
@@ -38,7 +42,7 @@ class DishViewModel(
         }
     }
 
-    fun findScoreAndComment() = viewModelScope.launch {
+    fun findScoreAttendaceComment(menuId: Int) = viewModelScope.launch {
         val find = FindScoreAndComment(
             dishId = dish?.id ?: 1,
             userId = useCase.auth.getLocaleUser().first().id
@@ -47,14 +51,16 @@ class DishViewModel(
             when (result) {
                 is ApiResult.Error -> {
                     Timber.e(result.error.toString())
-                    responseScoreCreateAndComment = null
+                    responseScoreCreateAttendaceComment = null
                 }
+
                 is ApiResult.Loading -> {
-                    responseScoreCreateAndComment = ApiResult.Loading()
+                    responseScoreCreateAttendaceComment = ApiResult.Loading()
                 }
+
                 is ApiResult.Success -> {
                     Timber.d("Success Score and Comment ${result.data?.data}")
-                    responseScoreCreateAndComment = null
+                    responseScoreCreateAttendaceComment = null
                     oldScore = result.data?.data
                 }
             }
@@ -63,16 +69,42 @@ class DishViewModel(
             when (result) {
                 is ApiResult.Error -> {
                     Timber.e(result.error.toString())
-                    responseScoreCreateAndComment = null
+                    responseScoreCreateAttendaceComment = null
                 }
+
                 is ApiResult.Loading -> {
                     Timber.d("Loading Score and Comment")
-                    responseScoreCreateAndComment = ApiResult.Loading()
+                    responseScoreCreateAttendaceComment = ApiResult.Loading()
                 }
+
                 is ApiResult.Success -> {
                     Timber.d("Success Score and Comment ${result.data?.data}")
-                    responseScoreCreateAndComment = null
+                    responseScoreCreateAttendaceComment = null
                     oldComment = result.data?.data
+                }
+            }
+        }
+
+
+        useCase.dish.findAttendance(
+            userId = useCase.auth.getLocaleUser().first().id,
+            itemId = useCase.dish.getLocalItemMenu(menuId).first()?.menuItem?.id?: 0
+        ).collect { result ->
+            when (result) {
+                is ApiResult.Error -> {
+                    Timber.e(result.error.toString())
+                    responseScoreCreateAttendaceComment = null
+                }
+
+                is ApiResult.Loading -> {
+                    Timber.d("Loading Score and Comment")
+                    responseScoreCreateAttendaceComment = Loading()
+                }
+
+                is ApiResult.Success -> {
+                    Timber.d("Success Score and Comment ${result.data?.data}")
+                    responseScoreCreateAttendaceComment = null
+                    if (result.data?.data != null) isAttendance = true
                 }
             }
         }
@@ -102,14 +134,16 @@ class DishViewModel(
         useCase.dish.createScore(score).collect {
             when (it) {
                 is ApiResult.Error -> {
-                    responseScoreCreateAndComment = ApiResult.Error(it.error.toString())
+                    responseScoreCreateAttendaceComment = ApiResult.Error(it.error.toString())
                     return@collect
                     Timber.e(it.error.toString())
                 }
+
                 is ApiResult.Loading -> {
                     Timber.e("Loading Score")
                     ApiResult.Loading<String>()
                 }
+
                 is ApiResult.Success -> {
                     Timber.e("Success Score ${it.data?.data}")
                     resScore = it.data?.data
@@ -120,20 +154,22 @@ class DishViewModel(
             when (it) {
                 is ApiResult.Error -> {
                     Timber.e(it.error.toString())
-                    responseScoreCreateAndComment = ApiResult.Error(it.error.toString())
+                    responseScoreCreateAttendaceComment = ApiResult.Error(it.error.toString())
                     return@collect
                 }
+
                 is ApiResult.Loading -> {
                     Timber.e("Loading Comment")
                     ApiResult.Loading<String>()
                 }
+
                 is ApiResult.Success -> {
                     Timber.e("Success Comment ${it.data?.data}")
                     resComment = it.data?.data
                 }
             }
         }
-        if (resScore != null && resComment != null) responseScoreCreateAndComment =
+        if (resScore != null && resComment != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "El comentario y la puntuación se han guardado correctamente",
@@ -141,7 +177,7 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else if (resScore != null) responseScoreCreateAndComment =
+        else if (resScore != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "La puntuación se han guardado correctamente",
@@ -149,7 +185,7 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else if (resComment != null) responseScoreCreateAndComment =
+        else if (resComment != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "El comentario se han guardado correctamente",
@@ -157,7 +193,7 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else responseScoreCreateAndComment = null
+        else responseScoreCreateAttendaceComment = null
     }
 
     fun editScoreAndComment(rating: Float, comment: String) = viewModelScope.launch {
@@ -169,41 +205,45 @@ class DishViewModel(
         )
         var resScore: ScoreResponse? = null
         var resComment: CommentResponse? = null
-        useCase.dish.editScore(oldScore?.id?: 0, score).collect {
+        useCase.dish.editScore(oldScore?.id ?: 0, score).collect {
             when (it) {
                 is ApiResult.Error -> {
-                    responseScoreCreateAndComment = ApiResult.Error(it.error.toString())
+                    responseScoreCreateAttendaceComment = ApiResult.Error(it.error.toString())
                     return@collect
                     Timber.e(it.error.toString())
                 }
+
                 is ApiResult.Loading -> {
                     Timber.e("Loading Score")
                     ApiResult.Loading<String>()
                 }
+
                 is ApiResult.Success -> {
                     Timber.e("Success Score ${it.data?.data}")
                     resScore = it.data?.data
                 }
             }
         }
-        useCase.dish.editComment(oldComment?.id?: 0, comment).collect {
+        useCase.dish.editComment(oldComment?.id ?: 0, comment).collect {
             when (it) {
                 is ApiResult.Error -> {
                     Timber.e(it.error.toString())
-                    responseScoreCreateAndComment = ApiResult.Error(it.error.toString())
+                    responseScoreCreateAttendaceComment = ApiResult.Error(it.error.toString())
                     return@collect
                 }
+
                 is ApiResult.Loading -> {
                     Timber.e("Loading Comment")
                     ApiResult.Loading<String>()
                 }
+
                 is ApiResult.Success -> {
                     Timber.e("Success Comment ${it.data?.data}")
                     resComment = it.data?.data
                 }
             }
         }
-        if (resScore != null && resComment != null) responseScoreCreateAndComment =
+        if (resScore != null && resComment != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "El comentario y la puntuación se han guardado correctamente",
@@ -211,7 +251,7 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else if (resScore != null) responseScoreCreateAndComment =
+        else if (resScore != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "La puntuación se han guardado correctamente",
@@ -219,7 +259,7 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else if (resComment != null) responseScoreCreateAndComment =
+        else if (resComment != null) responseScoreCreateAttendaceComment =
             ApiResult.Success(
                 ResponseBase(
                     data = "El comentario se han guardado correctamente",
@@ -227,7 +267,18 @@ class DishViewModel(
                     success = true,
                 )
             )
-        else responseScoreCreateAndComment = null
-        findScoreAndComment()
+        else responseScoreCreateAttendaceComment = null
+        findScoreAttendaceComment(0)
+    }
+
+    fun createAttendance(menuId: Int) = viewModelScope.launch {
+        val attendance = CreateAttendance(
+            userId = useCase.auth.getLocaleUser().first().id,
+            menuItemId = useCase.dish.getLocalItemMenu(menuId).first()?.menuItem?.id?: 0
+        )
+
+        useCase.dish.createAttendance(attendance).collect {
+            responseCreateAttendance = it
+        }
     }
 }

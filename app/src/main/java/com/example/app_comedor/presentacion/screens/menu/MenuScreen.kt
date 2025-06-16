@@ -141,7 +141,7 @@ fun MenuScreen(
                                     menuItem = menu.menuItems[index],
                                     modifier = Modifier.padding(8.dp),
                                     onclick = {
-                                        navController.navigate("Dish_Screen/${menu.menuItems[index].dish?.id}")
+                                        navController.navigate("Dish_Screen/${menu.menuItems[index].dish?.id}/${menu.menuItems[index].id}")
                                     }
                                 )
                             }

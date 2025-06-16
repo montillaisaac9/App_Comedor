@@ -20,11 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,14 +47,11 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.app_comedor.R
-import com.example.app_comedor.data.network.models.menu.DishDTO
-import com.example.app_comedor.data.network.models.menu.MenuItemDTO
 import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
 import com.example.app_comedor.presentacion.common.snackbar.CustomSnackbar
 import com.example.app_comedor.presentacion.common.topBar.CustomTopBar
 import com.example.app_comedor.presentacion.screens.dish.components.CustomAlertDialog
 import com.example.app_comedor.presentacion.screens.dish.components.RatingBottomSheet
-import com.example.app_comedor.presentacion.screens.menu.MenuViewModel
 import com.example.app_comedor.utils.ApiResult
 import com.example.app_comedor.utils.HOST
 import kotlinx.coroutines.launch
@@ -73,11 +66,13 @@ import java.util.Locale
 fun DishScreen(
     navController: NavController,
     dishId: Int? = null,
+    menuId: Int? = null,
     viewModel: DishViewModel = koinViewModel<DishViewModel>()
 ) {
 
     LaunchedEffect(dishId) {
         Timber.e("ID: $dishId")
+        Timber.e("MENU ID: $menuId")
         dishId?.let {
             viewModel.getLocalDish(dishId)
         }
@@ -88,15 +83,15 @@ fun DishScreen(
     val snackBarState = remember { SnackbarHostState() }
     // Estados para controlar las alertas y el BottomSheet
     var showRatingSheet by remember { mutableStateOf(false) }
-    var showAttendConfirmAlert by remember { mutableStateOf(false) }
     var showRatingSuccessAlert by remember { mutableStateOf(false) }
-    var responseCreateScoreAndComment = viewModel.responseScoreCreateAndComment
+    var responseCreateScoreAndComment = viewModel.responseScoreCreateAttendaceComment
+    var responseAttendCreate = viewModel.responseCreateAttendance
     val scrollState = rememberScrollState()
-    var message: String? = null
+    var message: String? = "ADWD"
 
     dish?.let {
         LaunchedEffect(Unit) {
-            viewModel.findScoreAndComment()
+            menuId?.let { viewModel.findScoreAttendaceComment(it) }
         }
         Scaffold(
             snackbarHost = {
@@ -276,12 +271,13 @@ fun DishScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(
-                            onClick = { showAttendConfirmAlert = true },
+                            onClick = { menuId?.let { it1 -> viewModel.createAttendance(it1) } },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFFFF3E0)
                             ),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(8.dp),
+                            enabled = !viewModel.isAttendance
                         ) {
                             Text(
                                 text = "Asistir",
@@ -347,6 +343,24 @@ fun DishScreen(
             message = responseCreateScoreAndComment.data?.data ?: ""
             navController.popBackStack()
         }
+        null -> {}
+    }
+    when (responseAttendCreate) {
+        is ApiResult.Error-> LaunchedEffect(Unit) {
+            scope.launch {
+                snackBarState.showSnackbar(
+                    message = responseAttendCreate.error ?: ""
+                )
+            }
+        }
+        is ApiResult.Loading -> CustomProgressBar()
+        is ApiResult.Success -> {
+            LaunchedEffect(Unit) {
+                showRatingSuccessAlert = true
+                message = responseAttendCreate.data?.data ?: ""
+                viewModel.isAttendance = true
+                }
+            }
         null -> {}
     }
 }

@@ -1,6 +1,7 @@
 package com.example.app_comedor.domain.usecase.modules
 
 
+import com.example.app_comedor.data.network.models.dish.params.CreateAttendance
 import com.example.app_comedor.data.network.models.dish.params.CreateComment
 import com.example.app_comedor.data.network.models.dish.params.CreateScore
 import com.example.app_comedor.data.network.models.dish.params.EditComment
@@ -20,7 +21,13 @@ class DishUseCase(val repositoryImpl: RepositoryDish) {
 
     suspend fun findComment(params: FindScoreAndComment) = repositoryImpl.findComment(params)
 
+    suspend fun findAttendance(userId: Int, itemId: Int) = repositoryImpl.verifyAttendance(userId, itemId)
+
     suspend fun editScore(id: Int, params: EditScore) = repositoryImpl.editScore(params, id)
 
     suspend fun editComment(id: Int, params: EditComment) = repositoryImpl.editComment(params, id)
+
+    suspend fun createAttendance(params: CreateAttendance) = repositoryImpl.createAttendance(params)
+
+    fun getLocalItemMenu(id: Int) = repositoryImpl.getMenuItemsLocal(id)
 }

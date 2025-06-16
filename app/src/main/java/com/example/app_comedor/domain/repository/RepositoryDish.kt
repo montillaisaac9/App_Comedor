@@ -1,8 +1,11 @@
 package com.example.app_comedor.domain.repository
 
 import com.example.app_comedor.data.db.entity.DishEntity
+import com.example.app_comedor.data.db.entity.MenuItemWithDish
+import com.example.app_comedor.data.network.models.dish.AttendanceResponse
 import com.example.app_comedor.data.network.models.dish.CommentResponse
 import com.example.app_comedor.data.network.models.dish.ScoreResponse
+import com.example.app_comedor.data.network.models.dish.params.CreateAttendance
 import com.example.app_comedor.data.network.models.dish.params.CreateComment
 import com.example.app_comedor.data.network.models.dish.params.CreateScore
 import com.example.app_comedor.data.network.models.dish.params.EditComment
@@ -26,5 +29,11 @@ interface RepositoryDish {
 
     suspend fun editComment(newComment: EditComment, id: Int):Flow<ApiResult<ResponseBase<CommentResponse>?>>
 
+    suspend fun createAttendance(attendance: CreateAttendance):Flow<ApiResult<ResponseBase<String>?>>
+
+    suspend fun verifyAttendance(userId: Int, itemId: Int):Flow<ApiResult<ResponseBase<AttendanceResponse>?>>
+
     fun getDishByIdLocal(id: Int): Flow<DishEntity?>
+
+    fun getMenuItemsLocal(id: Int): Flow<MenuItemWithDish?>
 }

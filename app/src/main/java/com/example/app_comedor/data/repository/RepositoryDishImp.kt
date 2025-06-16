@@ -1,10 +1,14 @@
 package com.example.app_comedor.data.repository
 
 import com.example.app_comedor.data.db.dao.DishDao
+import com.example.app_comedor.data.db.dao.MenuItemDao
 import com.example.app_comedor.data.db.entity.DishEntity
+import com.example.app_comedor.data.db.entity.MenuItemWithDish
 import com.example.app_comedor.data.network.client.ApiServiceImpl
+import com.example.app_comedor.data.network.models.dish.AttendanceResponse
 import com.example.app_comedor.data.network.models.dish.CommentResponse
 import com.example.app_comedor.data.network.models.dish.ScoreResponse
+import com.example.app_comedor.data.network.models.dish.params.CreateAttendance
 import com.example.app_comedor.data.network.models.dish.params.CreateComment
 import com.example.app_comedor.data.network.models.dish.params.CreateScore
 import com.example.app_comedor.data.network.models.dish.params.EditComment
@@ -19,7 +23,8 @@ import kotlinx.serialization.json.encodeToJsonElement
 
 class RepositoryDishImp(
     private val apiService: ApiServiceImpl,
-    private val dishDao: DishDao
+    private val dishDao: DishDao,
+    private val menuItemsDao: MenuItemDao
 ): RepositoryDish {
 
 
@@ -60,6 +65,21 @@ class RepositoryDishImp(
             bodyJson = Json.encodeToJsonElement(newComment)
         )
 
+    override suspend fun createAttendance(attendance: CreateAttendance) : Flow<ApiResult<ResponseBase<String>?>> =
+        apiService.post<String>(
+            url = "attendance",
+            bodyJson = Json.encodeToJsonElement(attendance)
+        )
+
+    override suspend fun verifyAttendance(
+        userId: Int,
+        itemId: Int
+    ): Flow<ApiResult<ResponseBase<AttendanceResponse>?>> =
+        apiService.post<AttendanceResponse>(
+            url = "attendance/user/$userId/menu-item/$itemId",
+            bodyJson = Json.encodeToJsonElement(Unit)
+        )
 
     override fun getDishByIdLocal(id: Int): Flow<DishEntity?> = dishDao.getDishById(id)
+    override fun getMenuItemsLocal(id: Int): Flow<MenuItemWithDish?> = menuItemsDao.getMenuItemById(id)
 }

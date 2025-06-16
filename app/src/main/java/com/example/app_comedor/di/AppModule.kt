@@ -22,7 +22,7 @@ val repositoryModule = module {
 
     single<RepositoryAuthImp> { RepositoryAuthImp(get(), get()) }
     single<RepositoryMenuImp> { RepositoryMenuImp(get(), get(), get()) }
-    single <RepositoryDishImp>{ RepositoryDishImp(get(), get()) }
+    single <RepositoryDishImp>{ RepositoryDishImp(get(), get(), get()) }
 
 }
 

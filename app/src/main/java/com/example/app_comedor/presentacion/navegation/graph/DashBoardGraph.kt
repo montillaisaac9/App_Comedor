@@ -31,9 +31,10 @@ fun NavGraphBuilder.dashboardNavGraph(navController: NavController) {
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(navController)
         }
-        composable("Dish_Screen/{id}") { backStackEntry ->
+        composable("Dish_Screen/{id}/{id2}") { backStackEntry ->
             val dishId = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
-            DishScreen(navController, dishId)
+            val menuId = backStackEntry.arguments?.getString("id2")?.toInt() ?: 0
+            DishScreen(navController, dishId, menuId)
         }
     }
 }

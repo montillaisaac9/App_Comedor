@@ -7,8 +7,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.app_comedor.data.db.entity.DishEntity
 import com.example.app_comedor.data.db.entity.MenuItemEntity
 import com.example.app_comedor.data.db.entity.MenuItemWithDish
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MenuItemDao {
@@ -18,7 +20,7 @@ interface MenuItemDao {
 
     @Transaction
     @Query("SELECT * FROM menu_items WHERE id = :id")
-    suspend fun getMenuItemById(id: Int): MenuItemWithDish?
+    fun getMenuItemById(id: Int): Flow<MenuItemWithDish?>
 
     @Transaction
     @Query("SELECT * FROM menu_items WHERE date = :date")
