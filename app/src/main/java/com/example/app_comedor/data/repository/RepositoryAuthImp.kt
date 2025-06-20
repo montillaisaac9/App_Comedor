@@ -5,6 +5,7 @@ import com.example.app_comedor.data.db.entity.UserEntity
 import com.example.app_comedor.data.network.client.ApiServiceImpl
 import com.example.app_comedor.data.network.models.auth.CreateUser
 import com.example.app_comedor.data.network.models.auth.LoginParams
+import com.example.app_comedor.data.network.models.auth.ResetPasswordRequest
 import com.example.app_comedor.data.network.models.auth.ResponseCarriers
 import com.example.app_comedor.data.network.models.auth.User
 import com.example.app_comedor.data.network.response.ResponseBase
@@ -41,7 +42,13 @@ class RepositoryAuthImp(
             imageFile = imageFile
         )
 
-    override fun getLocalPerfil(): Flow<UserEntity> = userDao.getUserFlow()
+    override suspend fun resetPassword(params: ResetPasswordRequest): Flow<ApiResult<ResponseBase<String>?>> =
+        apiService.post<String>(
+            url = "authentication/changePassword",
+            bodyJson = Json.encodeToJsonElement(params)
+        )
+
+    override fun getLocalProfile(): Flow<UserEntity> = userDao.getUserFlow()
 
     override suspend fun saveLocal(user: UserEntity) = userDao.insertUser(user)
 

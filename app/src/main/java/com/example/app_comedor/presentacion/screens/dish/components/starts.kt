@@ -172,7 +172,8 @@ fun AnimatedStarRating(
                                 .fillMaxSize()
                                 .zIndex(3f) // Encima de todo para asegurar la detección del clic
                                 .clickable {
-                                    if (!clickable) return@clickable
+                                    if (!clickable) {return@clickable}
+                                    else {
                                     val oldRating = rating
                                     val newClickedRating = when { // Tu lógica de clic original
                                         (oldRating > i - 0.25f && oldRating < i + 0.25f) -> i - 0.5f
@@ -184,6 +185,7 @@ fun AnimatedStarRating(
                                     if (newClickedRating != oldRating) {
                                         rating = newClickedRating
                                         playSound()
+                                        }
                                     }
                                 }
                         )

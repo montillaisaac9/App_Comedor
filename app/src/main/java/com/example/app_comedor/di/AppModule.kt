@@ -10,6 +10,7 @@ import com.example.app_comedor.domain.usecase.modules.DishUseCase
 import com.example.app_comedor.domain.usecase.modules.MenuUseCase
 import com.example.app_comedor.presentacion.screens.auth.login.LoginViewModel
 import com.example.app_comedor.presentacion.screens.auth.register.RegisterViewModel
+import com.example.app_comedor.presentacion.screens.auth.resetPassword.ResetPasswordViewmodel
 import com.example.app_comedor.presentacion.screens.auth.splash.SplashViewModel
 import com.example.app_comedor.presentacion.screens.dish.DishViewModel
 import com.example.app_comedor.presentacion.screens.menu.MenuViewModel
@@ -46,6 +47,7 @@ val viewModelModule = module {
     viewModel { MenuViewModel(get<UseCase>()) }
     viewModel { ProfileViewModel(get<UseCase>()) }
     viewModel { DishViewModel(get<UseCase>()) }
+    viewModel { ResetPasswordViewmodel(get<UseCase>()) }
 }
 
 

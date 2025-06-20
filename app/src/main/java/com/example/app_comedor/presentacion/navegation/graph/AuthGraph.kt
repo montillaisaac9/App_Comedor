@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.example.app_comedor.presentacion.navegation.destination.Screen
 import com.example.app_comedor.presentacion.screens.auth.login.LoginScreen
 import com.example.app_comedor.presentacion.screens.auth.register.RegisterScreen
+import com.example.app_comedor.presentacion.screens.auth.resetPassword.ScreenResetPassword
 
 fun NavGraphBuilder.authNavGraph(navController: NavController) {
     navigation(
@@ -19,5 +20,10 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
         composable(Screen.RegisterScreen.route) {
             RegisterScreen(navController = navController)
         }
+        composable(Screen.ResetPasswordScreen.route) {
+            ScreenResetPassword(navController = navController)
+        }
+
+
     }
 }

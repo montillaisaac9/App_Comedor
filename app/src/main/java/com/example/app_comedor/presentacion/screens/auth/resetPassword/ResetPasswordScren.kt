@@ -1,4 +1,4 @@
-package com.example.app_comedor.presentacion.screens.auth.login
+package com.example.app_comedor.presentacion.screens.auth.resetPassword
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -42,18 +42,19 @@ import com.example.app_comedor.presentacion.common.inputs.CustomInput
 import com.example.app_comedor.presentacion.common.progresBar.CustomProgressBar
 import com.example.app_comedor.presentacion.common.snackbar.CustomSnackbar
 import com.example.app_comedor.presentacion.navegation.destination.Screen
+import com.example.app_comedor.presentacion.screens.auth.login.LoginViewModel
 import com.example.app_comedor.utils.ApiResult
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginScreen(
+fun ScreenResetPassword(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+    viewModel: ResetPasswordViewmodel = koinViewModel<ResetPasswordViewmodel>()
 ) {
     val focusManager = LocalFocusManager.current
-    val stateLogin = viewModel.state
+    val state = viewModel.state
     val snackBarState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -91,67 +92,95 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.fillMaxHeight(0.15f))
                 Text(
-                    "Iniciar Sesión",
+                    "Recuperar Contraseña",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.fillMaxHeight(0.15f))
                 CustomInput(
                     modifier = Modifier.fillMaxWidth(0.95f),
-                    state = stateLogin.email,
+                    state = state.email,
                     label = stringResource(R.string.correo_electronico),
-                    errorText = viewModel.state.errMsgEmail,
-                    trailingIcon = if (stateLogin.email.isNotEmpty()) Icons.Outlined.Clear else null,
-                    trailingIconDescription = if (stateLogin.email.isNotEmpty()) stringResource(R.string.clear_field) else null,
-                    onTrailingIconClick = { viewModel.setTextEmail("") },
+                    errorText ="",
+                    trailingIcon = if (state.email.isNotEmpty()) Icons.Outlined.Clear else null,
+                    trailingIconDescription = if (state.email.isNotEmpty()) stringResource(R.string.clear_field) else null,
+                    onTrailingIconClick = { viewModel.setValue("email", "") },
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next,
                     onImeAction = { focusManager.moveFocus(FocusDirection.Down) },
                 ) {
-                    viewModel.setTextEmail(it)
+                    viewModel.setValue("email", it)
                 }
-
-                Spacer(modifier = Modifier.height(10.dp))
                 CustomInput(
-                    modifier = Modifier.fillMaxWidth(0.95f),
-                    state = stateLogin.password,
+                    modifier = Modifier
+                        .fillMaxWidth(0.95f)
+                        .padding(top = 14.dp),
+                    state = state.wordSecurity,
+                    label = "Palabra de seguridad",
+                    errorText = "",
+                    trailingIcon = if (state.wordSecurity.isNotEmpty()) Icons.Outlined.Clear else null,
+                    trailingIconDescription = if (state.wordSecurity.isNotEmpty()) stringResource(
+                        R.string.clear_field
+                    ) else null,
+                    onTrailingIconClick = {
+                        viewModel.setValue(
+                            "wordSecurity",
+                            ""
+                        )
+                    },
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                    onImeAction = { focusManager.moveFocus(FocusDirection.Down) }
+                ) { input -> viewModel.setValue("wordSecurity", input) }
+
+                CustomInput(
+                    modifier = Modifier
+                        .fillMaxWidth(0.95f)
+                        .padding(top = 14.dp),
+                    state = state.password,
                     label = stringResource(R.string.contrase_a),
-                    errorText = stateLogin.errMsgPassword,
-                    trailingIcon = if (stateLogin.password.isNotEmpty()) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                    trailingIconDescription = if (stateLogin.password.isNotEmpty()) stringResource(R.string.show_password) else stringResource(
+                    errorText = "",
+                    trailingIcon = if (state.password.isNotEmpty()) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                    trailingIconDescription = if (state.password.isNotEmpty()) stringResource(
+                        R.string.show_password
+                    ) else stringResource(
                         R.string.hide_password
                     ),
                     onTrailingIconClick = {},
                     keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next,
+                    onImeAction = { focusManager.moveFocus(FocusDirection.Down) }
+                ) { viewModel.setValue("password", it) }
+
+                CustomInput(
+                    modifier = Modifier
+                        .fillMaxWidth(0.95f)
+                        .padding(top = 14.dp),
+                    state = state.confirmPassword,
+                    label = "Confirmar contraseña",
+                    errorText = "",
+                    trailingIcon = if (state.confirmPassword.isNotEmpty()) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                    trailingIconDescription = if (state.confirmPassword.isNotEmpty()) stringResource(
+                        R.string.show_password
+                    ) else stringResource(R.string.hide_password),
+                    onTrailingIconClick = {},
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                     onImeAction = { focusManager.clearFocus() }
-                ) {
-                    viewModel.setTextPassword(it)
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(0.95f),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    TextButton(
-                        onClick = {
-                            navController.navigate(Screen.ResetPasswordScreen.route) {
-                                launchSingleTop = true
-                            }
-                    }) {
-                        Text("Olvide mi Contraseña", color = MaterialTheme.colorScheme.primary)
-                    }
-                }
+                ) { viewModel.setValue("confirmPassword", it) }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 16.dp)
             ) {
                 CustomButton(
                     background = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(10.dp, bottom = 30.dp),
-                    text = "Iniciar Sesión",
-                    enable = stateLogin.email.isNotEmpty() && stateLogin.password.isNotEmpty()
+                    text = "Recuperar Contraseña",
+                    enable = state.email.isNotEmpty() && state.password.isNotEmpty() && state.wordSecurity.isNotEmpty() && state.confirmPassword.isNotEmpty(),
                 ) {
-                    viewModel.login()
+                    viewModel.resetPassword()
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(0.95f),
@@ -168,32 +197,25 @@ fun LoginScreen(
             }
         }
     }
-    }
-    when (viewModel.loginResponse) {
+    when (viewModel.resetPasswordResponse) {
         is ApiResult.Error -> {
             LaunchedEffect(Unit) {
                 scope.launch {
                     snackBarState.showSnackbar(
-                        message = viewModel.loginResponse?.error ?: ""
+                        message = viewModel.resetPasswordResponse?.error ?: ""
                     )
                 }
             }
         }
-
         is ApiResult.Loading -> CustomProgressBar()
         is ApiResult.Success -> {
-            val user = viewModel.loginResponse?.data?.data  // Assuming this is your User object
-            user?.let {
-                viewModel.savePerfil(it.toDto())
-                navController.navigate(Screen.SplashScreen.route) {
-                    popUpTo("auth") {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
+            navController.navigate(Screen.LoginScreen.route) {
+                popUpTo(Screen.LoginScreen.route) {
+                    inclusive = true
                 }
+                launchSingleTop = true
             }
         }
-
         null -> {}
     }
 }

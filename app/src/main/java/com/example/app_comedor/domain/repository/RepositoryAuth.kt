@@ -3,6 +3,7 @@ package com.example.app_comedor.domain.repository
 import com.example.app_comedor.data.db.entity.UserEntity
 import com.example.app_comedor.data.network.models.auth.CreateUser
 import com.example.app_comedor.data.network.models.auth.LoginParams
+import com.example.app_comedor.data.network.models.auth.ResetPasswordRequest
 import com.example.app_comedor.data.network.models.auth.ResponseCarriers
 import com.example.app_comedor.data.network.models.auth.User
 import com.example.app_comedor.data.network.response.ResponseBase
@@ -18,7 +19,9 @@ interface RepositoryAuth {
 
     suspend fun registerUser(user: CreateUser, imageFile: File? = null): Flow<ApiResult<ResponseBase<String>?>>
 
-    fun getLocalPerfil(): Flow<UserEntity>
+    suspend fun resetPassword(params: ResetPasswordRequest):Flow<ApiResult<ResponseBase<String>?>>
+
+    fun getLocalProfile(): Flow<UserEntity>
 
     suspend fun saveLocal(user: UserEntity)
 

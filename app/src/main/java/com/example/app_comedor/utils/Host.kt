@@ -1,4 +1,4 @@
 package com.example.app_comedor.utils
 
 
-const val HOST = "http://192.168.100.72:3000/"
+const val HOST = "http://172.17.12.115:3000/"
