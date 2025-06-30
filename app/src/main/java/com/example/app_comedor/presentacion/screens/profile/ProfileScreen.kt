@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
@@ -125,14 +126,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = ko
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        imageVector = Icons.Filled.ArrowBackIosNew,
                         contentDescription = "Edit",
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Cerrar Sessiop",
-                        color = MaterialTheme.colorScheme.onBackground
+                        text = "Cerrar Sessio",
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             } else CustomProgressBar()

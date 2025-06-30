@@ -93,6 +93,7 @@ fun FoodMenuItem(
                         onRatingChanged = { it ->
                         },
                         starSize = 30,
+                        clickable = false,
                         starColor = Color(0xFFFFD700), // Color dorado
                     )
                 }

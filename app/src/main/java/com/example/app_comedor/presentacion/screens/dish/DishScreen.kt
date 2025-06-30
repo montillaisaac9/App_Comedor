@@ -240,7 +240,7 @@ fun DishScreen(
                             onRatingChanged = {},
                             starSize = 20,
                             starColor = Color(0xFFFFD700), // Color dorado
-                            clickable = true
+                            clickable = false,
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
